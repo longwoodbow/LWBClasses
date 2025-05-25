@@ -181,6 +181,8 @@ void onCommand(CInventory@ this, u8 cmd, CBitStream@ params)
 		u8 i;
 		if (!params.saferead_u8(i)) return; 
 
+		musketman.buildmode = MusketmanBuilding::barricade;
+
 		const u8 PAGE = blob.get_u8("build page");
 		if (blocks !is null && i >= 0 && i < blocks[PAGE].length)
 		{
@@ -215,6 +217,8 @@ void onCommand(CInventory@ this, u8 cmd, CBitStream@ params)
 		blob.ClearGridMenus();
 
 		ClearCarriedBlock(blob);
+		
+		musketman.buildmode = MusketmanBuilding::nothing;
 	}
 }
 
