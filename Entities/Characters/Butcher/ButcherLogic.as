@@ -466,7 +466,16 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 					{
 						cookFood(blob);
 						if(blobName == "steak") server_MakeFood(blob.getPosition(), "Cooked Steak", 0);
+						else if(blobName == "fishy") server_MakeFood(blob.getPosition(), "Cooked Fish", 1);
 						cooked = true;
+					}
+					else if (blobName == "chicken")
+					{
+						server_MakeFood(blob.getPosition(), "Cooked Chicken", 0);
+						server_MakeFood(blob.getPosition(), "Cooked Chicken", 0);
+						cooked = true;
+						blob.server_Die();
+
 					}
 					else if (hitHard)
 					{
@@ -542,6 +551,36 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 				}
 			}
 		}
+		else if (damage > 0.0f && hitBlob.getName() == "chicken" && !hitBlob.hasTag("butched") && hitBlob.getHealth() <= 0.0f)
+		{
+			hitBlob.Tag("butched");//safety, no double butcher
+			s16 poisonTimer = hitBlob.exists(poison_timer) ? hitBlob.get_s16(poison_timer) : 0; // i think i never add poisonable to chicken
+			bool poisoned = poisonTimer > 0;
+			Vec2f blobPos = hitBlob.getPosition();
+			if (getNet().isServer())
+			{
+				if (poisoned)
+				{
+					CBlob@ meat = server_CreateBlobNoInit("mat_poisonmeats");
+					if (meat !is null)
+					{
+						meat.Tag('custom quantity');
+				 		meat.Init();
+				 		meat.setPosition(blobPos);
+				 		meat.server_SetQuantity(3);
+				 	}
+				 }
+				else
+				{
+					CBlob@ steak = server_CreateBlob("steak");
+					if (steak !is null)
+					{
+			 			steak.setPosition(blobPos);
+			 		}
+				}
+			}
+		}
+
 
 		/*if (blockAttack(hitBlob, velocity, 0.0f))
 		{
