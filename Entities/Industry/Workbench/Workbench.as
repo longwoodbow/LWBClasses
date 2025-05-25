@@ -65,6 +65,7 @@ void InitWorkshop(CBlob@ this)
 		ShopItem@ s = addShopItem(this, "Drill", "$drill$", "drill", Descriptions::drill + "\n\nRock Thrower, War Crafter and Demolitionist can use this too.", false);
 		AddRequirement(s.requirements, "blob", "mat_stone", "Stone", WARCosts::drill_stone);
 		if (TTH) AddRequirement(s.requirements, "tech", "drill", "Drill Technology");
+		else AddRequirement(s.requirements, "coin", "", "Coins", LWB_WARCosts::drill_coin);
 	}
 	{
 		ShopItem@ s = addShopItem(this, "Saw", "$saw$", "saw", Descriptions::saw, false);

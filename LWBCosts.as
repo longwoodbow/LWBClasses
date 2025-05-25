@@ -46,6 +46,7 @@ namespace LWB_CTFCosts
 namespace LWB_WARCosts
 {
 	//Workbench.as
+	s32 drill_coin          = 25;
 	s32 mountedbow_wood     = 200;
 	s32 mountedgun_wood     = 500;
 	s32 mountedgun_stone    = 500;
