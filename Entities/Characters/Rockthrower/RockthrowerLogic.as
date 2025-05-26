@@ -222,7 +222,7 @@ void Throw(CBlob@ this, RockthrowerInfo@ rockthrower, bool hasDrill)
 	}
 
 	bool justCheck = rockthrower.throwTimer == 7;
-	if (justCheck && this.isMyPlayer())
+	if (justCheck && this.isMyPlayer() && !hasDrill)
 	{
 		if (hasStones(this))
 		{
