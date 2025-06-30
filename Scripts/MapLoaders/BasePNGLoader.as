@@ -4,6 +4,7 @@
 // Note for modders upgrading their mod, handlePixel's signature has changed recently!
 
 // added new items in random magazine
+// also added moba structures
 
 #include "LoaderColors.as";
 #include "LoaderUtilities.as";
@@ -330,6 +331,15 @@ class PNGLoader
 			case map_colors::workbench:       autotile(offset); spawnBlob(map, "workbench",   offset, 255, true); break;
 			case map_colors::campfire:        autotile(offset); spawnBlob(map, "fireplace",   offset, 255); break;
 			case map_colors::saw:             autotile(offset); spawnBlob(map, "saw",         offset); break;
+
+			// Moba
+		    case 0xFF0102F4: spawnBlob(map, "tower", offset, 0, false); break;
+		    case 0xFFF40201: spawnBlob(map, "tower", offset, 1, false); break;
+		    case 0xFF0001F4: spawnBlob(map, "rebuild", offset, 255, false); break;
+		    case 0xFFF40100: spawnBlob(map, "rebuild1", offset, 255, false); break;
+		    case 0xFF01F401: spawnBlob(map, "rebuild2", offset, 255, false); break;
+		    case 0xFFF4F401: spawnBlob(map, "rebuild3", offset, 255, false); break;
+		    case 0xFFF4F4F4: spawnBlob(map, "rebuild4", offset, 255, false); break;
 
 			// Flora
 			case map_colors::tree:

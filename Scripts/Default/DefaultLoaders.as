@@ -1,9 +1,10 @@
-
+// added new modes.
 void LoadDefaultMapLoaders()
 {
 	printf("############ GAMEMODE " + sv_gamemode);
 	if (sv_gamemode == "TTH" || sv_gamemode == "WAR" ||
-	        sv_gamemode == "tth" || sv_gamemode == "war")
+	        sv_gamemode == "tth" || sv_gamemode == "war" ||
+	        sv_gamemode == "Moba" || sv_gamemode == "moba")
 	{
 		RegisterFileExtensionScript("Scripts/MapLoaders/LoadWarPNG.as", "png");
 	}
@@ -11,7 +12,7 @@ void LoadDefaultMapLoaders()
 	{
 		RegisterFileExtensionScript("Scripts/MapLoaders/LoadChallengePNG.as", "png");
 	}
-	else if (sv_gamemode == "TDM" || sv_gamemode == "tdm")
+	else if (sv_gamemode == "TDM" || sv_gamemode == "tdm" || sv_gamemode == "AD" || sv_gamemode == "ad")
 	{
 		RegisterFileExtensionScript("Scripts/MapLoaders/LoadTDMPNG.as", "png");
 	}

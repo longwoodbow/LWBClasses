@@ -280,7 +280,22 @@ void onTick(CBlob@ this)
 		this.Tag("prevent crouch");
 	}
 
-	if(this.isMyPlayer())
+	bool ismyplayer = this.isMyPlayer();
+	bool responsible = ismyplayer;
+	if (isServer() && !ismyplayer)
+	{
+		CPlayer@ p = this.getPlayer();
+		if (p !is null)
+		{
+			responsible = p.isBot();
+		}
+		else // like moba assassin
+		{
+			responsible = true;
+		}
+	}
+
+	if(responsible)
 	{
 		// description
 		/*
@@ -312,11 +327,7 @@ void onTick(CBlob@ this)
 
 void client_SendThrowOrActivateCommandSmoke(CBlob@ this)
 {
-    if (this.isMyPlayer())
-    {
-        CBitStream params;
-        this.SendCommand(this.getCommandID("smokeball"), params);
-    }
+	this.SendCommand(this.getCommandID("smokeball"));
 }
 
 bool checkGrappleBarrier(Vec2f pos)
