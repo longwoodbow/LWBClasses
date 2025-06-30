@@ -282,7 +282,7 @@ void ManageGrapple(CBlob@ this, GunnerInfo@ gunner)
 
 }
 
-void ManageBow(CBlob@ this, GunnerInfo@ gunner, RunnerMoveVars@ moveVars)
+void ManageGun(CBlob@ this, GunnerInfo@ gunner, RunnerMoveVars@ moveVars)
 {
 	//are we responsible for this actor?
 	bool ismyplayer = this.isMyPlayer();
@@ -441,7 +441,7 @@ void ManageBow(CBlob@ this, GunnerInfo@ gunner, RunnerMoveVars@ moveVars)
 			}
 			charge_time++;
 
-			if (charge_time > GunnerParams::shoot_period + GunnerParams::ready_time)
+			if (charge_time > GunnerParams::shoot_period)
 			{
 				charge_state = GunnerParams::charging;
 			}
@@ -605,7 +605,7 @@ void onTick(CBlob@ this)
 		return;
 	}
 
-	ManageBow(this, gunner, moveVars);
+	ManageGun(this, gunner, moveVars);
 }
 
 bool checkGrappleBarrier(Vec2f pos)

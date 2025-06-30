@@ -16,10 +16,19 @@ void onInit(CBlob@ this)
 	this.getSprite().SetZ(-50); //background
 	this.getShape().getConsts().mapCollisions = false;
 	this.set_u32("minionCD", 0);
-	addSeedItem( this, "blah", "bleg", 23, 1);
+	this.set("Turret0-0", null);
+	this.set("Turret1-0", null);
+	this.set("Turret2-0", null);
 }
-CBlob@ SpawnMook(Vec2f pos, const string &in classname, u8 team)
+CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team, string assign)
 	{
+		CBlob@ current;
+		if (this.get(assign, @current))
+		{
+			if (current !is null && !current.hasTag("dead"))
+				return null;
+		}
+
 		CBlob@ blob = server_CreateBlobNoInit(classname);
 		if (blob !is null)
 		{
@@ -27,21 +36,31 @@ CBlob@ SpawnMook(Vec2f pos, const string &in classname, u8 team)
 			blob.setSexNum(XORRandom(2));
 			blob.server_setTeamNum(team);
 			blob.setPosition(pos + Vec2f(4.0f, 0.0f));
-			blob.set_s32("difficulty", 10);
+			blob.set_s32("difficulty", 15);
 			SetMookHead(blob, classname);
 			blob.Init();
 			if(blob.getTeamNum() == 1)
 				blob.SetFacingLeft(true);
 			blob.getBrain().server_SetActive(true);
 			blob.server_SetTimeToDie(60 * 3);	 // delete after 6 minutes
+			GiveAmmo(@blob);
+			this.set(assign, @blob);
 		}
 		return blob;
 	}
 	void GiveAmmo(CBlob@ blob)
 	{
-		if (blob.getName() == "archer")
+		if (blob.getName() == "musketman_moba" || blob.getName() == "gunner_moba")
 		{
-			CBlob@ mat = server_CreateBlob("mat_arrows");
+			CBlob@ mat = server_CreateBlob("mat_bullets");
+			if (mat !is null)
+			{
+				blob.server_PutInInventory(mat);
+			}
+		}
+		else if (blob.getName() == "firelancer_moba")
+		{
+			CBlob@ mat = server_CreateBlob("mat_firelances");
 			if (mat !is null)
 			{
 				blob.server_PutInInventory(mat);
@@ -51,10 +70,10 @@ CBlob@ SpawnMook(Vec2f pos, const string &in classname, u8 team)
 
 	void SetMookHead(CBlob@ blob, const string &in classname)
 	{
-		const bool isKnight = classname == "knight";
+		const bool isKnight = false;
 
 		int head = 15;
-		int selection = 10 + XORRandom(3);
+		int selection = 0 + XORRandom(16);
 		if (selection > 15)
 		{
 			selection = 15;
@@ -112,13 +131,20 @@ CBlob@ SpawnMook(Vec2f pos, const string &in classname, u8 team)
 
 		blob.setHeadNum(head);
 	}
-	ShopItem@ addSeedItem( CBlob@ this, const string &in seedName,const string &in  description, u16 timeToMakeSecs, const u16 quantityLimit, CBitStream@ requirements = null )
-{
-	const string newIcon = "$" + seedName + "$";
-	ShopItem@ item = addProductionItem( this, "archerTurret", newIcon, "archerTurret", "", 24, false, 2, requirements );
-	return item;
-}
 
+void onTick(CBlob@ this)
+{
+		if( this.getTeamNum() < 3 && this.get_u32("minionCD") > 140)
+		{
+			Vec2f pos = this.getPosition();
+			SpawnMook(this, pos, "musketman_moba", this.getTeamNum(), "Turret0-0");
+			SpawnMook(this, pos + Vec2f(10.0f, 0.0f), "gunner_moba", this.getTeamNum(), "Turret1-0");
+			SpawnMook(this, pos + Vec2f(-10.0f, 0.0f), "firelancer_moba", this.getTeamNum(), "Turret2-0");
+			this.set_u32("minionCD", 0);
+		}
+		else 
+			this.set_u32("minionCD", this.get_u32("minionCD") + 1 );
+}
 
 
 void onCommand(CBlob@ this, u8 cmd, CBitStream @params)

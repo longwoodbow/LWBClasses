@@ -137,7 +137,7 @@ void ManageLance(CBlob@ this, FirelancerInfo@ firelancer, RunnerMoveVars@ moveVa
 		{
 			charge_state = FirelancerParams::firing;
 			this.set_s32("shoot time", getGameTime() + FirelancerParams::shoot_period);
-			if (!isServer()) this.SendCommand(this.getCommandID("sync ignite"));
+			if (responsible) this.SendCommand(this.getCommandID("sync ignite"));
 		}
 	}
 	//charged - no else (we want to check the very same tick)

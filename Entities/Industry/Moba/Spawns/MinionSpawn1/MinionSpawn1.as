@@ -33,7 +33,7 @@ CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team)
 			blob.setSexNum(XORRandom(2));
 			blob.server_setTeamNum(team);
 			blob.setPosition(pos + Vec2f(4.0f, 0.0f));
-			blob.set_s32("difficulty", 10);
+			blob.set_s32("difficulty", 15);
 			SetMookHead(blob, classname);
 			blob.Init();
 			if(blob.getTeamNum() == 1)
@@ -69,7 +69,7 @@ CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team)
 		const bool isKnight = true;
 
 		int head = 15;
-		int selection = 10 + XORRandom(3);
+		int selection = 0 + XORRandom(16);
 		if (selection > 15)
 		{
 			selection = 15;

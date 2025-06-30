@@ -53,7 +53,7 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 	}
 }
 
-void ManageBow(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVars)
+void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVars)
 {
 	//are we responsible for this actor?
 	bool ismyplayer = this.isMyPlayer();
@@ -371,7 +371,7 @@ void onTick(CBlob@ this)
 		return;
 	}
 
-	ManageBow(this, musketman, moveVars);
+	ManageMusket(this, musketman, moveVars);
 
 	if(this.isMyPlayer() && this.getCarriedBlob() is null && getBuildMode(this) == MusketmanBuilding::barricade && this.isKeyJustPressed(key_action1))// reload barricade
 		this.SendCommand(this.getCommandID("barricade"));
