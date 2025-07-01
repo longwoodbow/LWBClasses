@@ -74,7 +74,7 @@ void onTick(CBrain@ this)
 				blob.set("target_ally", null);
 				@ally = null;
 			}
-			else if (ally.getHealth >= ally.getInitialHealth())
+			else if (ally.getHealth() >= ally.getInitialHealth())
 			{
 				blob.set("target_ally", null);
 				@ally = null;
