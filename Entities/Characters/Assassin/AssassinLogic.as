@@ -289,6 +289,10 @@ void onTick(CBlob@ this)
 		{
 			responsible = p.isBot();
 		}
+		else // like moba mobs
+		{
+			responsible = true;
+		}
 	}
 
 	if(responsible)
