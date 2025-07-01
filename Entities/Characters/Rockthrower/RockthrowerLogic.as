@@ -26,6 +26,12 @@ void onInit(CBlob@ this)
 	RockthrowerInfo rockthrower;
 	this.set("rockthrowerInfo", @rockthrower);
 
+	// make moba rockthrower throwing rocks
+	if (this.getName() == "rockthrower_moba")
+	{
+		rockthrower.action = Action::throw;
+	}
+
 	this.set_f32("gib health", -1.5f);
 
 	this.Tag("player");
@@ -129,8 +135,22 @@ void onTick(CBlob@ this)
 
 	Throw(this, rockthrower, hasDrill); // need to operate on all side because of slow system
 
+	bool responsible = ismyplayer;
+	if (isServer() && !ismyplayer)
+	{
+		CPlayer@ p = this.getPlayer();
+		if (p !is null)
+		{
+			responsible = p.isBot();
+		}
+		else // like moba mobs
+		{
+			responsible = true;
+		}
+	}
+
 	// activate/throw
-	if (ismyplayer)
+	if (responsible)
 	{
 		Pickaxe(this, rockthrower);
 		if (rockthrower.boulderTimer > 0) rockthrower.boulderTimer--;
@@ -221,8 +241,23 @@ void Throw(CBlob@ this, RockthrowerInfo@ rockthrower, bool hasDrill)
 		rockthrower.throwTimer++;
 	}
 
+	bool ismyplayer = this.isMyPlayer();
+	bool responsible = ismyplayer;
+	if (isServer() && !ismyplayer)
+	{
+		CPlayer@ p = this.getPlayer();
+		if (p !is null)
+		{
+			responsible = p.isBot();
+		}
+		else // like moba mobs
+		{
+			responsible = true;
+		}
+	}
+
 	bool justCheck = rockthrower.throwTimer == 7;
-	if (justCheck && this.isMyPlayer() && !hasDrill)
+	if (justCheck && responsible && !hasDrill)
 	{
 		if (hasStones(this))
 		{

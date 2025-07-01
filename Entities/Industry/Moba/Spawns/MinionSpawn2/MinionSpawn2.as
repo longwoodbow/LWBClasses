@@ -6,6 +6,7 @@
 #include "WARCosts.as";
 #include "CheckSpam.as";
 #include "GenericButtonCommon.as";
+#include "RockthrowerCommon.as";
 
 
 
@@ -16,6 +17,7 @@ void onInit(CBlob@ this)
 	this.getSprite().SetZ(-50); //background
 	this.getShape().getConsts().mapCollisions = false;
 	this.set_u32("minionCD", 0);
+	this.Tag("invincable");
 	this.set_u8("def", 0);
 	this.set_u8("atk", 0);
 	this.set_u8("spd", 0);
@@ -42,7 +44,7 @@ CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team)
 				blob.SetFacingLeft(false);
 			blob.getBrain().server_SetActive(true);
 			blob.server_SetTimeToDie(60 * 3);	 // delete after 6 minutes
-			GiveAmmo(@blob);
+			GiveAmmo(blob);
 
 			// upgrades
 			blob.set_u8("def", this.get_u8("def"));
@@ -54,9 +56,25 @@ CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team)
 	}
 	void GiveAmmo(CBlob@ blob)
 	{
-		if (blob.getName() == "spearman_moba")
+		if (blob.getName() == "rockthrower_moba")
 		{
-			CBlob@ mat = server_CreateBlob("mat_spears");
+			CBlob@ mat = server_CreateBlob("mat_stone");
+			if (mat !is null)
+			{
+				blob.server_PutInInventory(mat);
+			}
+		}
+		else if (blob.getName() == "butcher_moba")
+		{
+			CBlob@ mat = server_CreateBlob("mat_poisonmeats");
+			if (mat !is null)
+			{
+				blob.server_PutInInventory(mat);
+			}
+		}
+		else if (blob.getName() == "medic_moba")
+		{
+			CBlob@ mat = server_CreateBlob("mat_medkits");
 			if (mat !is null)
 			{
 				blob.server_PutInInventory(mat);
@@ -66,7 +84,7 @@ CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team)
 
 	void SetMookHead(CBlob@ blob, const string &in classname)
 	{
-		const bool isKnight = true;
+		const bool isKnight = false;
 
 		int head = 15;
 		int selection = 0 + XORRandom(16);
@@ -131,12 +149,12 @@ void onTick(CBlob@ this)
 {
 	if (!isServer()) return;
 	
-		if( this.getTeamNum() < 3 && this.get_u32("minionCD") > 1400)
+		if( this.getTeamNum() < 3 && this.get_u32("minionCD") > 800)
 		{
 			Vec2f pos = this.getPosition();
-			SpawnMook(this, pos, "knight_moba", this.getTeamNum());
-			SpawnMook(this, pos + Vec2f(10.0f, 0.0f), "spearman_moba", this.getTeamNum());
-			SpawnMook(this, pos + Vec2f(-10.0f, 0.0f), "warhammer_moba", this.getTeamNum());
+			SpawnMook(this, pos, "medic_moba", this.getTeamNum());
+			SpawnMook(this, pos + Vec2f(10.0f, 0.0f), "rockthrower_moba", this.getTeamNum());
+			SpawnMook(this, pos + Vec2f(-10.0f, 0.0f), "butcher_moba", this.getTeamNum());
 			this.set_u32("minionCD", 0);
 		}
 		else 

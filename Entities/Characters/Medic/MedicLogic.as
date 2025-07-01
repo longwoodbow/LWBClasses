@@ -286,7 +286,22 @@ void onTick(CBlob@ this)
 
 	ManageGrapple(this, medic);
 
-	if (this.isMyPlayer())
+	bool ismyplayer = this.isMyPlayer();
+	bool responsible = ismyplayer;
+	if (isServer() && !ismyplayer)
+	{
+		CPlayer@ p = this.getPlayer();
+		if (p !is null)
+		{
+			responsible = p.isBot();
+		}
+		else // like moba mobs
+		{
+			responsible = true;
+		}
+	}
+	
+	if (responsible)
 	{
 		// description
 		/*

@@ -63,6 +63,21 @@ void onTick(CBlob@ this)
 		return;
 	}
 
+	bool ismyplayer = this.isMyPlayer();
+	bool responsible = ismyplayer;
+	if (isServer() && !ismyplayer)
+	{
+		CPlayer@ p = this.getPlayer();
+		if (p !is null)
+		{
+			responsible = p.isBot();
+		}
+		else // like moba mobs
+		{
+			responsible = true;
+		}
+	}
+
 	if (isKnocked(this) || this.isInInventory())
 	{
 		this.getSprite().SetEmitSoundPaused(true);
@@ -100,19 +115,19 @@ void onTick(CBlob@ this)
 		if (butcher.knife_timer == 7)
 		{
 			Sound::Play("/SwordSlash", this.getPosition());
-			if (this.isMyPlayer()) this.SendCommand(this.getCommandID("knife"));
+			if (responsible) this.SendCommand(this.getCommandID("knife"));
 		}
 	}
 	else if(throwing)
 	{
 		butcher.throw_timer++;
 
-		if (butcher.throw_timer == 7 && this.isMyPlayer())
+		if (butcher.throw_timer == 7 && responsible)
 		{
 			this.SendCommand(this.getCommandID("throwmeat"));
 		}
 	}
-	if(this.isMyPlayer())
+	if(responsible)
 	{
 		// description
 		/*

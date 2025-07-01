@@ -35,7 +35,7 @@ void onInit( CBlob@ this )
 	this.Tag(SHOP_AUTOCLOSE);
 	
 	{
-		ShopItem@ s = addShopItem( this, "Rebuild", "$bomberfactory$", "minionspawn1", "Rebuild" );
+		ShopItem@ s = addShopItem( this, "Rebuild", "$bomberfactory$", "minionspawn1", "Rebuild heavy melee spawn." );
 		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 600 );
 	}
 

@@ -129,6 +129,8 @@ CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team)
 	}
 void onTick(CBlob@ this)
 {
+	if (!isServer()) return;
+	
 		if( this.getTeamNum() < 3 && this.get_u32("minionCD") > 800)
 		{
 			Vec2f pos = this.getPosition();

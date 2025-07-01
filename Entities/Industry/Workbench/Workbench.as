@@ -34,7 +34,7 @@ void InitWorkshop(CBlob@ this)
 
 	}*/
 
-	const bool TTH = gamemode == "TTH";
+	const bool TTH = gamemode == "TTH" || gamemode == "Moba";
 
 	AddIconToken("$_buildershop_filled_bucket$", "Bucket.png", Vec2f(16, 16), 1);
 
