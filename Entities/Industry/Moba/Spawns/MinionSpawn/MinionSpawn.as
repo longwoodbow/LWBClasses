@@ -42,7 +42,7 @@ CBlob@ SpawnMook(CBlob@ this, Vec2f pos, const string &in classname, u8 team)
 			else
 				blob.SetFacingLeft(false);
 			blob.getBrain().server_SetActive(true);
-			blob.server_SetTimeToDie(60 * 3);	 // delete after 6 minutes
+			blob.server_SetTimeToDie(60 * 1);	 // delete after 6 minutes
 
 			// upgrades
 			blob.set_u8("def", this.get_u8("def"));
