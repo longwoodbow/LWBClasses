@@ -190,7 +190,7 @@ void DefaultChaseBlob(CBlob@ blob, CBlob @target)
 
 	const CBrain::BrainState state = brain.getState();
 	{
-		if (!isFriendAheadOfMe(blob, target))
+		//if (!isFriendAheadOfMe(blob, target))
 		{
 			if (state == CBrain::has_path)
 			{
