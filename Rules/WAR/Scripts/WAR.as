@@ -186,7 +186,7 @@ shared class WarSpawns : RespawnSystem
 					// create new builder at edge
 					if (p_info.team < war_core.teams.length)
 					{
-						p_info.blob_name = ClassesConfig::knight ? "knight" : randomClass(false); // force knight
+						p_info.blob_name = ClassesConfig::knight ? "knight" : randomClass(false); // force knight, changed
 						WarTeamInfo@ team = cast < WarTeamInfo@ > (core.getTeam(p_info.team));
 						if (team.bedsCount > 0 || !team.under_raid)
 						{
@@ -1082,7 +1082,7 @@ void MakeWarTradeMenu(CBlob@ trader)
 	InitCosts();
 
 	// build menu
-	CreateTradeMenu(trader, Vec2f(3, 13), "Trade");
+	CreateTradeMenu(trader, Vec2f(3, 13), "Trade"); // changed and added from here
 
 	//econ techs
 //	addTradeSeparatorItem( trader, "$MENU_INDUSTRY$", Vec2f(3,1) );

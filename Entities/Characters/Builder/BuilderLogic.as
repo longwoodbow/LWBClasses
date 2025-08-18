@@ -378,7 +378,7 @@ void Pickaxe(CBlob@ this)
 				b.hasTag("door") ||
 				attacked_name == "ladder" ||
 				attacked_name == "spikes" ||
-				b.hasTag("builder fast hittable")
+				b.hasTag("builder fast hittable") // added
 				)
 			{
 				hitting_structure = true;
@@ -620,7 +620,7 @@ void HandlePickaxeCommand(CBlob@ this, CBitStream@ params)
 				b.hasTag("door") ||
 				attacked_name == "ladder" ||
 				attacked_name == "spikes" ||
-				b.hasTag("builder fast hittable")
+				b.hasTag("builder fast hittable") // added
 				)
 			{
 				hitting_structure = true;

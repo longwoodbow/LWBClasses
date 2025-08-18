@@ -30,7 +30,7 @@ const int coinsOnBuildStoneDoor = 5;
 const int coinsOnBuildWood = 1;
 const int coinsOnBuildWorkshop = 10;
 
-const int coinsOnMedicHeal = 4;
+const int coinsOnMedicHeal = 4; // added
 
 const int warmupFactor = 3;
 
@@ -252,7 +252,7 @@ void awardCoins(CBitStream@ params)
 	{
 		coins = coinsOnCapFlag;
 	}
-	else if (event_id == CGameplayEvent_IDs::MedicHeal)
+	else if (event_id == CGameplayEvent_IDs::MedicHeal) // added
 	{
 		f32 amount; 
 		if (!params.saferead_f32(amount)) return;

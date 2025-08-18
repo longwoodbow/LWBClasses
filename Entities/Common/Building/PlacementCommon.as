@@ -143,7 +143,8 @@ bool isBuildableAtPos(CBlob@ this, Vec2f p, TileType buildTile, CBlob @blob, boo
 			const string bname = blob.getName();
 			isLadder = bname == "ladder";
 			isSpikes = bname == "spikes";
-			isDoor = bname == "wooden_door" || bname == "stone_door" || bname == "bridge" || bname == "barricade";
+			isDoor = bname == "wooden_door" || bname == "stone_door" || bname == "bridge" || 
+			bname == "barricade" || bname == "climbablebarricade"; // added
 			isPlatform = bname == "wooden_platform";
 			isSeed = bname == "seed";
 		}

@@ -135,7 +135,7 @@ shared class CTFSpawns : RespawnSystem
 			}
 
 			// spawn as builder in warmup
-			if (getRules().isWarmup() && ClassesConfig::builder)
+			if (getRules().isWarmup() && ClassesConfig::builder) // changed
 			{
 				p_info.blob_name = "builder";
 			}
@@ -442,7 +442,7 @@ shared class CTFCore : RulesCore
 		{
 			team = player.getTeamNum();
 		}
-		CTFPlayerInfo p(player.getUsername(), team, randomClass(true));
+		CTFPlayerInfo p(player.getUsername(), team, randomClass(true)); // changed
 		players.push_back(p);
 		ChangeTeamPlayerCount(p.team, 1);
 	}

@@ -31,6 +31,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 
 		switch (customData)
 		{
+			// changed from here
 			case Hitters::builder:
 			case Hitters::hammer:
 				time = 0; break;
@@ -59,26 +60,6 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			case Hitters::stick:
 				time = 20; break;
 				
-			/*
-			case Hitters::fire:
-			case Hitters::poisoning:
-				if (hitterBlob.getName() == "spearman")// fire/poison spear hit
-				{
-					if (damage > 1.0f || force)
-					{
-						time = 20;
-						if (force) //broke shield
-							time = 10;
-					}
-					else
-					{
-						time = 2;
-					}
-				}
-
-				break;
-			*/
-
 			case Hitters::shield:
 				time = 15; break;
 

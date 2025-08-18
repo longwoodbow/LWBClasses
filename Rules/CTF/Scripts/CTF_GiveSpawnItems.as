@@ -10,6 +10,7 @@ bool SetMaterials(CBlob@ blob,  const string &in name, const int quantity, bool 
 	CInventory@ inv = blob.getInventory();
 
 	//avoid over-stacking arrows
+	//changed, disallowed this on my mod
 	/*
 	if (name == "mat_arrows")
 	{
@@ -53,11 +54,12 @@ void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ attacker, u8 customData
 	if (victim !is null)
 	{
 		SetCTFTimer(this, victim, 0, "archer");
-		SetCTFTimer(this, victim, 0, "medic");
+		SetCTFTimer(this, victim, 0, "medic"); // added here
 		SetCTFTimer(this, victim, 0, "spearman");
 		SetCTFTimer(this, victim, 0, "musketman");
 		SetCTFTimer(this, victim, 0, "weaponthrower");
 		SetCTFTimer(this, victim, 0, "firelancer");
+		SetCTFTimer(this, victim, 0, "handcannon");
 	}
 }
 
@@ -68,7 +70,7 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	s32 gametime = getGameTime();
 	string name = b.getName();
 	
-	if (name == "builder" || name == "rockthrower" || name == "warcrafter" || name == "demolitionist" || name == "chopper" || this.isWarmup()) 
+	if (name == "builder" || name == "rockthrower" || name == "warcrafter" || name == "demolitionist" || name == "chopper" || this.isWarmup()) // changed from here
 	{
 		if (gametime > getCTFTimer(this, p, "builder")) 
 		{
@@ -93,7 +95,7 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 		}
 	} 
 
-	if (name == "archer" || name == "crossbowman") 
+	if (name == "archer" || name == "crossbowman") // changed and added from here
 	{
 		if (gametime > getCTFTimer(this, p, "archer")) 
 		{
@@ -153,7 +155,17 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	{
 		if (gametime > getCTFTimer(this, p, "firelancer")) 
 		{
-			if (SetMaterials(b, "mat_firelances", 5)) 
+			if (SetMaterials(b, "mat_firelances", 10)) 
+			{
+				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "firelancer");
+			}
+		}
+	}
+	else if (name == "handcannon") 
+	{
+		if (gametime > getCTFTimer(this, p, "firelancer")) 
+		{
+			if (SetMaterials(b, "mat_handcannonballs", 10)) 
 			{
 				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "firelancer");
 			}
@@ -211,7 +223,7 @@ void onTick(CRules@ this)
 		getBlobsByName("warboat",	 @spots);
 		getBlobsByName("buildershop", @spots);
 		getBlobsByName("archershop",  @spots);
-		getBlobsByName("knightshop",  @spots);
+		getBlobsByName("knightshop",  @spots); // added
 		for (uint step = 0; step < spots.length; ++step) 
 		{
 			CBlob@ spot = spots[step];
@@ -234,7 +246,7 @@ void onTick(CRules@ this)
 
 				string class_name = overlapped.getName();
 				
-				//new style does not fit for my mod
+				// changed, new style does not fit for my mod
 				//if (isShop && name.find(class_name) == -1) continue; // NOTE: builder doesn't get wood+stone at archershop, archer doesn't get arrows at buildershop
 
 				if (!(isShop && name.find(class_name) == -1) || // for other mods
@@ -251,14 +263,16 @@ void onTick(CRules@ this)
 						 class_name == "assassin"  ||
 						 class_name == "chopper"   ||
 						 class_name == "warhammer" ||
-						 class_name == "duelist")) ||
+						 class_name == "duelist"   ||
+						 class_name == "pikeman")) ||
 					(name == "archershop" &&
 						(class_name == "archer"        ||
 						 class_name == "crossbowman"   ||
 						 class_name == "musketman"     ||
 						 class_name == "weaponthrower" ||
 						 class_name == "firelancer"    ||
-						 class_name == "gunner")))
+						 class_name == "gunner"        ||
+						 class_name == "handcannon")))
 					doGiveSpawnMats(this, p, overlapped);
 			}
 		}
@@ -270,13 +284,14 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 {
 	s32 next_add_time = getGameTime() + (this.isWarmup() ? materials_wait_warmup : materials_wait) * getTicksASecond();
 
-	if (next_add_time < getCTFTimer(this, player, "builder") ||
+	if (next_add_time < getCTFTimer(this, player, "builder") || // added from here
 		next_add_time < getCTFTimer(this, player, "archer") ||
 		next_add_time < getCTFTimer(this, player, "medic") ||
 		next_add_time < getCTFTimer(this, player, "spearman") ||
 		next_add_time < getCTFTimer(this, player, "musketman") ||
 		next_add_time < getCTFTimer(this, player, "weaponthrower") ||
-		next_add_time < getCTFTimer(this, player, "firelancer"))
+		next_add_time < getCTFTimer(this, player, "firelancer") ||
+		next_add_time < getCTFTimer(this, player, "handcannon"))
 	{
 		SetCTFTimer(this, player, getGameTime(), "builder");
 		SetCTFTimer(this, player, getGameTime(), "archer");
@@ -285,5 +300,6 @@ void onNewPlayerJoin(CRules@ this, CPlayer@ player)
 		SetCTFTimer(this, player, getGameTime(), "musketman");
 		SetCTFTimer(this, player, getGameTime(), "weaponthrower");
 		SetCTFTimer(this, player, getGameTime(), "firelancer");
+		SetCTFTimer(this, player, getGameTime(), "handcannon");
 	}
 }

@@ -69,7 +69,7 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 
 bool canBePickedUp(CBlob@ this, CBlob@ byBlob)
 {
-	return (this.getName().findLast("_moba") > 0 && this.getTeamNum() == byBlob.getTeamNum()) || this.hasTag("migrant") || this.hasTag("dead");
+	return (this.getName().findLast("_moba") > 0 && this.getTeamNum() == byBlob.getTeamNum()) || this.hasTag("migrant") || this.hasTag("dead"); // changed
 }
 
 // make Suicide ignore invincibility

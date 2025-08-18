@@ -16,7 +16,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			case Hitters::drown:
 			case Hitters::burn:
 			case Hitters::fire:
-			case Hitters::poison:
+			case Hitters::poison: // changed here
 			case Hitters::poisoning:
 				showblood = false;
 				break;

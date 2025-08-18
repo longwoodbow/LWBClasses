@@ -87,14 +87,18 @@ namespace Hitters
 		firelance,
 		stick,
 		kitchenknife,
-		thrownaxe
+		thrownaxe,
+		pike_thrust,
+		pike_slash,
+		handcannon,
+		handaxe
 	};
 }
 
 // not keg - not blockable :)
 bool isExplosionHitter(u8 type)
 {
-	return type == Hitters::bomb || type == Hitters::explosion || type == Hitters::mine || type == Hitters::bomb_arrow;
+	return type == Hitters::bomb || type == Hitters::explosion || type == Hitters::mine || type == Hitters::bomb_arrow || type == Hitters::handcannon; // also added here
 }
 
 bool isWaterHitter(u8 type)

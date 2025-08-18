@@ -67,7 +67,7 @@ int getHeadFrame(CBlob@ blob, int headIndex, bool default_pack)
 		{
 			headIndex = NUM_UNIQUEHEADS + 2;
 		}
-		else if (config == "rockthrower")
+		else if (config == "rockthrower") // added from here
 		{
 			headIndex = NUM_UNIQUEHEADS + 3;
 		}

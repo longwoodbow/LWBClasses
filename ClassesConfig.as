@@ -29,6 +29,10 @@ namespace ClassesConfig
 	const bool weaponthrower = true;
 	const bool firelancer = true;
 	const bool gunner = true;
+
+	//advanced
+	const bool pikeman = true;
+	const bool handcannon = true;
 }
 
 shared string randomClass(bool allowBuilder)

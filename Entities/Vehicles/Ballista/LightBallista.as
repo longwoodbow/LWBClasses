@@ -180,7 +180,7 @@ void onTick(CBlob@ this)
 
 		Vehicle_StandardControls(this, v);
 
-		if (v.cooldown_time > 0)
+		if (this.hasAttached() && v.cooldown_time > 0)
 		{
 			v.cooldown_time--;
 		}

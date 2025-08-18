@@ -413,7 +413,7 @@ shared class TDMCore : RulesCore
 							{
 								player_char = "a";
 							}
-							else if (player_blob.getName() == "rockthrower")
+							else if (player_blob.getName() == "rockthrower") // added from here
 							{
 								player_char = "r";
 							}
@@ -525,7 +525,7 @@ shared class TDMCore : RulesCore
 
 	void AddPlayer(CPlayer@ player, u8 team = 0, string default_config = "")
 	{
-		TDMPlayerInfo p(player.getUsername(), player.getTeamNum(), player.isBot() ? "knight" : randomClass(false));
+		TDMPlayerInfo p(player.getUsername(), player.getTeamNum(), (player.isBot() && ClassesConfig::knight) ? "knight" : randomClass(false)); // changed here
 		players.push_back(p);
 		ChangeTeamPlayerCount(p.team, 1);
 	}
@@ -836,7 +836,7 @@ shared class TDMCore : RulesCore
 	{
 		// give archer arrows
 
-		string className = blob.getName();
+		string className = blob.getName(); // added from here
 
 		if (className == "archer" ||
 			className == "crossbowman" ||
@@ -846,7 +846,8 @@ shared class TDMCore : RulesCore
 			className == "spearman" ||
 			className == "weaponthrower" ||
 			className == "firelancer" ||
-			className == "gunner")
+			className == "gunner" ||
+			className == "handcannon")
 		{
 			string ammoName = getClassAmmo(className);
 			// first check if its in surroundings
@@ -896,7 +897,7 @@ shared class TDMCore : RulesCore
 		else if(name == "spearman") return"mat_spears";
 		else if(name == "weaponthrower") return"mat_boomerangs";
 		else if(name == "firelancer") return"mat_firelances";
-		else return "";
+		else return "mat_handcannonballs"; // hadcannon
 	}
 };
 

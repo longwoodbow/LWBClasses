@@ -1,4 +1,5 @@
 // Modified chest for Christmas
+// added new classes.
 
 #include "LootCommon.as";
 #include "GenericButtonCommon.as";

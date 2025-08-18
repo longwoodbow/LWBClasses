@@ -47,7 +47,7 @@ TradeItem@ addItemForCoin(CBlob@ this, const string &in name, int cost, const bo
 	return item;
 }
 
-void MakeTradeMenu(CBlob@ trader)
+void MakeTradeMenu(CBlob@ trader) // added in this method
 {
 	//load config
 

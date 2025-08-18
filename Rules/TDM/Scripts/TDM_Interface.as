@@ -1,4 +1,5 @@
 #include "TDM_Structs.as";
+//added new classes for icons
 
 /*
 void onTick( CRules@ this )
@@ -59,14 +60,14 @@ void onRender(CRules@ this)
 
 					if (player_char != "s")
 					{
-						bool newClass = false;
+						bool newClass = false; // added
 						int player_frame = 1;
 
 						if (player_char == "a")
 						{
 							player_frame = 2;
 						}
-						else if (player_char == "r")//rockthrower
+						else if (player_char == "r")//rockthrower, added from here
 						{
 							player_frame = 0;
 							newClass = true;

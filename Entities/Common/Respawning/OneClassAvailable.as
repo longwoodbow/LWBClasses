@@ -29,7 +29,7 @@ void onInit(CBlob@ this)
 	this.addCommandID("change class");
 }
 
-void GetButtonsFor(CBlob@ this, CBlob@ caller)
+void GetButtonsFor(CBlob@ this, CBlob@ caller) // changed here
 {
 	if (!canSeeButtons(this, caller) || (!this.exists(req_class) && !this.hasTag("multi classes"))) return;
 

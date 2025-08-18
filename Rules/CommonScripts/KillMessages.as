@@ -6,7 +6,7 @@
 #include "HoverMessage.as";
 #include "AssistCommon.as";
 
-string[] tips;
+string[] tips; // added
 
 int fade_time = 300;
 
@@ -189,7 +189,7 @@ class KillFeed
 				case Hitters::drill:			hitterIcon = "$killfeed_drill$"; break;
 				case Hitters::saw:				hitterIcon = "$killfeed_saw$"; break;
 
-				//LWB
+				//LWB, added
 				case Hitters::poisoning:
 				case Hitters::poison:			hitterIcon = "$killfeed_poison$"; break;
 				case Hitters::thrownrock:		hitterIcon = "$killfeed_thrownrock$"; break;
@@ -265,7 +265,7 @@ void Reset(CRules@ this)
 {
 	KillFeed feed;
 	this.set("KillFeed", feed);
-	LoadTips();
+	LoadTips(); // added
 }
 
 void onRestart(CRules@ this)
@@ -273,7 +273,7 @@ void onRestart(CRules@ this)
 	Reset(this);
 }
 
-void LoadTips()
+void LoadTips() // added
 {
 	tips.clear();
 
@@ -315,7 +315,7 @@ void onInit(CRules@ this)
 	AddIconToken("$killfeed_drill$", "GUI/KillfeedIcons.png", Vec2f(32, 16), 19);
 	AddIconToken("$killfeed_saw$", "GUI/KillfeedIcons.png", Vec2f(32, 16), 20);
 
-	// LWB
+	// LWB, added
 	AddIconToken("$killfeed_poison$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 0);
 	AddIconToken("$killfeed_thrownrock$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 1);
 	AddIconToken("$killfeed_hammer$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 2);
@@ -364,6 +364,7 @@ void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ killer, u8 customdata)
 
 			bool kill = killerblob !is null && victimblob !is null && killerblob !is victimblob;
 			bool assist = helper !is null && helper.isMyPlayer();
+
 			if (kill)
 			{
 				if (isServer())
@@ -420,7 +421,7 @@ void onTick(CRules@ this)
 	{
 		feed.Update();
 	}
-	if(isClient() && getGameTime() % 600 == 0 && tips.length > 0)//tips, because this is few rule scripts
+	if(isClient() && getGameTime() % 600 == 0 && tips.length > 0)// added, tips, because this is few rule scripts
 	{
 		client_AddToChat("Tip:" + tips[XORRandom(tips.length)], SColor(255, 0, 150, 135));
 	}

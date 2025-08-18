@@ -10,7 +10,6 @@
 #include "PixelOffsets.as"
 #include "RunnerTextures.as"
 #include "Accolades.as"
-#include "EmotesCommon.as";
 
 
 //
@@ -66,18 +65,6 @@ void onTick(CSprite@ this)
 {
 	// store some vars for ease and speed
 	CBlob@ blob = this.getBlob();
-
-	// description
-	// I added it here because no change for builder
-	/*
-	if (u_showtutorial && blob.isMyPlayer() && !blob.hasTag("spoke description"))
-	{
-		blob.Chat("I can build a quarry in TTH\nThat's all, but still important class!");
-		blob.set_u8("emote", Emotes::off);
-		blob.set_u32("emotetime", getGameTime() + 150);
-		blob.Tag("spoke description");
-	}
-	*/
 
 	if (blob.hasTag("dead"))
 	{

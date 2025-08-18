@@ -27,13 +27,14 @@ bool canChangeClass(CBlob@ this, CBlob@ blob)
 
 }
 
+// changed from here
 namespace ClassesDescriptions
 {
 	const string
 	builder = "Build ALL the towers.\nStill important class for keeping battlefront by building.",
 	rockthrower = "Basic Tactics.\nThis class can make rain of rocks for obstruct enemies and build ladder for help allies. Also can dig using classic hammer.\n\n[LMB] to throw/build(change action at inventory)\n[RMB] to use hammer\n[SPACE] to make boulder(throw state) or rotate(build state)",
 	medic = "Medical and Chemical.\nThis class can heal allies and spray liquid to enemies. Also can use grapple.\n\n[LMB] to heal ally\n[RMB] to use grapple\n[SPACE] to use spray, can buy jars at builder shop",
-	warcrafter = "Build 'n' Kill.\nThis class can build some goods and makeshift barricades. Especially can spam fire using torch.\n\nControl is as same as builder, tap [F] to switch weapon mode\nIn weapon mode, [LMB] to throw makeshift axe, [SPACE] near fireplace to make torch",
+	warcrafter = "Build 'n' Kill.\nThis class can build some goods and makeshift barricades. Also can throw makeshift axe and spam fire using torch.\n\nControl is as same as builder, tap [F] to switch weapon mode\nIn weapon mode, [LMB] to throw makeshift axe, [SPACE] near fireplace to make torch",
 	butcher = "Human Resources.\nThis class can make steaks and poisonous meat from corpses. Also can throw poisonous meat for poison spam.\n\n[LMB] to use knife to butch corpses\n[RMB] to throw meat\n[SPACE] to use oil to ignite and cook steak, chicken or fishy, can buy at builder shop",
 	demolitionist = "Demolish be Smart.\nThis class can use bomb box, pickaxe, grapple and barricades.\n\n[LMB] to build/use pickaxe(change action at inventory)\n[RMB] to use grapple",
 	knight = "Hack and Slash.\nStill important class for making and pushing battlefront.",
@@ -80,7 +81,7 @@ void BuildRespawnMenuFor(CBlob@ this, CBlob @caller)
 {
 	PlayerClass[]@ classes;
 	this.get("playerclasses", @classes);
-	// TODO: make melee, ranged and support classes menu
+	
 	if (caller !is null && caller.isMyPlayer() && classes !is null)
 	{
 		if (this.hasTag("all_classes_loaded"))
@@ -195,6 +196,7 @@ void buildSpawnMenu(CBlob@ this, CBlob@ caller)
 	AddIconToken("$gunner_class_icon$", "GUI/LWBClassIcons.png", Vec2f(32, 32), 14, caller.getTeamNum());
 	BuildRespawnMenuFor(this, caller);
 }
+// to here
 
 void onRespawnCommand(CBlob@ this, u8 cmd, CBitStream @params)
 {

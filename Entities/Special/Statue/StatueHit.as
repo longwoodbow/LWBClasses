@@ -41,12 +41,16 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::boomerang:
 		case Hitters::kitchenknife:
 		case Hitters::thrownaxe:
+		case Hitters::pike_thrust:
 			dmg *= 0.5f;
 			break;
 
 		case Hitters::chakram:
 		case Hitters::warhammer:
 		case Hitters::flail:
+		case Hitters::pike_slash:
+		case Hitters::handcannon:
+		case Hitters::handaxe:
 			dmg *= 1.0f;
 			break;
 

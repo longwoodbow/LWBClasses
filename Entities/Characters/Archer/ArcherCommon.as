@@ -49,7 +49,7 @@ namespace ArrowType
 		water,
 		fire,
 		bomb,
-		poison,
+		poison, // added
 		count
 	};
 }
@@ -185,21 +185,21 @@ const string[] arrowTypeNames = { "mat_arrows",
                                   "mat_waterarrows",
                                   "mat_firearrows",
                                   "mat_bombarrows",
-								  "mat_poisonarrows"
+								  "mat_poisonarrows" // added
                                 };
 
 const string[] arrowNames = { "Regular arrows",
                               "Water arrows",
                               "Fire arrows",
                               "Bomb arrow",
-							  "Poison arrows"
+							  "Poison arrows" // added
                             };
 
 const string[] arrowIcons = { "$Arrow$",
                               "$WaterArrow$",
                               "$FireArrow$",
                               "$BombArrow$",
-							  "$PoisonArrow$"
+							  "$PoisonArrow$" // added
                             };
 
 

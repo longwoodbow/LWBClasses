@@ -187,7 +187,7 @@ class PNGLoader
 				string name;
 				if(alpha == items.length) // random
 				{
-					string gamemode = getRules().gamemode_name;
+					string gamemode = getRules().gamemode_name; // changed from here
 					bool builderItems = (ClassesConfig::builder || ClassesConfig::chopper || ClassesConfig::warcrafter || ClassesConfig::demolitionist) && !(gamemode == "TDM" || gamemode == "DTS");//building classes in gamemode allows builder
 					string[] randomItem;
 					randomItem.push_back("food");
@@ -242,7 +242,7 @@ class PNGLoader
 						randomItem.push_back("mat_poisonmeats");
 						randomItem.push_back("mat_cookingoils");
 					}
-					name = randomItem[XORRandom(randomItem.length)];
+					name = randomItem[XORRandom(randomItem.length)]; // to here
 				}
 				else
 				{
@@ -332,7 +332,7 @@ class PNGLoader
 			case map_colors::campfire:        autotile(offset); spawnBlob(map, "fireplace",   offset, 255); break;
 			case map_colors::saw:             autotile(offset); spawnBlob(map, "saw",         offset); break;
 
-			// Moba
+			// Moba, added
 		    case 0xFF0102F4: spawnBlob(map, "tower", offset, 0, false); break;
 		    case 0xFFF40201: spawnBlob(map, "tower", offset, 1, false); break;
 		    case 0xFF0001F4: spawnBlob(map, "rebuild", offset, 255, false); break;

@@ -16,12 +16,11 @@ void onInit(CBlob@ this)
 	this.set_bool("map_damage_raycast", true);
 	this.set_f32("keg_time", 180.0f);  // 180.0f
 	this.Tag("medium weight");
+	this.Tag("slash_while_in_hand"); // allows knights to knock kegs off enemies' backs
 
 	this.set_u16("_keg_carrier_id", 0xffff);
 
 	CSprite@ sprite = this.getSprite();
-
-	sprite.SetZ(-10);
 
 	CSpriteLayer@ fuse = this.getSprite().addSpriteLayer("fuse", "Keg.png" , 16, 16, 0, 0);
 
@@ -33,6 +32,8 @@ void onInit(CBlob@ this)
 		fuse.SetOffset(Vec2f(3, -4));
 		fuse.SetRelativeZ(1);
 	}
+
+	this.set_f32("important-pickup", 30.0f);
 }
 
 //sprite update
@@ -102,7 +103,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 	{
 		case Hitters::sword:
 		case Hitters::arrow:
-		case Hitters::thrownrock:
+		case Hitters::thrownrock: // added from here
 		case Hitters::bayonet:
 		case Hitters::bullet:
 		case Hitters::spear:
@@ -113,6 +114,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::firelance:
 		case Hitters::stick:
 		case Hitters::kitchenknife:
+		case Hitters::pike_thrust:
 			damage *= 0.25f; //quarter damage from these
 			break;
 		case Hitters::water:
@@ -134,7 +136,6 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 				this.set_s32("explosion_timer", Maths::Min(this.get_s32("explosion_timer"), getGameTime() + XORRandom(this.get_f32("keg_time")) / 3));
 				this.Sync("explosion_timer", true);
 			}
-
 			damage *= 0.0f; //invincible to allow keg chain reaction
 			break;
 		default:

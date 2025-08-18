@@ -16,7 +16,7 @@ bool canBlockThisType(u8 type) // this function needs to use a tag on the hitter
 	       type == Hitters::bite ||
 	       type == Hitters::stab ||
 	       type == Hitters::cata_stones ||
-	       type == Hitters::thrownrock ||
+	       type == Hitters::thrownrock || // added from here
 	       type == Hitters::hammer ||
 	       type == Hitters::bayonet ||
 	       type == Hitters::bullet ||

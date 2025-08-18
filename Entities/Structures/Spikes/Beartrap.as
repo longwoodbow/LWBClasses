@@ -158,6 +158,10 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::stick:
 		case Hitters::kitchenknife:
 		case Hitters::thrownaxe:
+		case Hitters::pike_thrust:
+		case Hitters::pike_slash:
+		case Hitters::handcannon:
+		case Hitters::handaxe:
 			dmg = 0.0f;
 			setTrapped(this);
 			break;

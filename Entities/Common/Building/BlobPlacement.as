@@ -216,7 +216,14 @@ void PositionCarried(CBlob@ this, CBlob@ carryBlob)
 
 			if (this.isKeyPressed(key_down))      // hack for crouch
 			{
-				if ((this.getName() == "archer" || this.getName() == "assassin" || this.getName() == "musketman" || this.getName() == "duelist" || this.getName() == "firelancer"|| this.getName() == "gunner") && sprite.isAnimation("crouch")) //hack for archer prone
+				if ((this.getName() == "archer" || 
+				this.getName() == "assassin" || 
+				this.getName() == "musketman" || 
+				this.getName() == "duelist" || 
+				this.getName() == "firelancer"|| 
+				this.getName() == "gunner" ||
+				this.getName() == "handcannon") && 
+				sprite.isAnimation("crouch")) //hack for archer prone // changed here
 				{
 					hands.offset.y -= 4;
 					hands.offset.x += 2;

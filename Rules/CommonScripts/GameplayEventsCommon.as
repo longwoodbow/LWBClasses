@@ -14,7 +14,7 @@ enum CGameplayEvent_IDs
 	HitVehicle,
 	KillVehicle,
 	CaptureFlag,
-	HitStatue,
+	HitStatue, // added from here
 	KillStatue,
 	MedicHeal,
 	End
@@ -82,7 +82,7 @@ void GE_CaptureFlag(u16 player_id)
 		onFlagCap(params);
 	}
 }
-
+// added from here
 void GE_HitStatue(u16 player_id, f32 dmg)
 {
 	CGameplayEvent@ onStatueDamage;

@@ -124,7 +124,7 @@ void addCommonBuilderBlocks(BuildBlock[][]@ blocks, int team_num = 0, const stri
 	else if (TTH)
 	{
 		{
-			BuildBlock b(0, "warbuilding", "$building$", "Workshop");
+			BuildBlock b(0, "warbuilding", "$building$", "Workshop"); // changed
 			AddRequirement(b.reqs, "blob", "mat_wood", "Wood", WARCosts::factory_wood);
 			b.buildOnGround = true;
 			b.size.Set(40, 24);

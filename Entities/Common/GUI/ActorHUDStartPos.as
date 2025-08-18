@@ -6,7 +6,7 @@
 bool shouldRenderResupplyIndicator(CBlob@ blob)
 {
 	return ((getRules().gamemode_name == "CTF" || getRules().gamemode_name == "SmallCTF") &&
-		(blob.getName() == "builder" || blob.getName() == "rockthrower" || blob.getName() == "warcrafter" || blob.getName() == "demolitionist" || blob.getName() == "chopper"));
+		(blob.getName() == "builder" || blob.getName() == "rockthrower" || blob.getName() == "warcrafter" || blob.getName() == "demolitionist" || blob.getName() == "chopper")); // changed here
 }
 
 f32 getHUDX()
@@ -63,7 +63,7 @@ void DrawResupplyOnHUD(CBlob@ this, Vec2f tl)
 	u32 secs = ((next_items - 1 - getGameTime()) / getTicksASecond()) + 1;
 	string units = ((secs != 1) ? " seconds" : " second");
 
-	string resupply_available = getTranslatedString("Go to a " + (this.getName() == "chopper" ? "knight" : "builder") +" shop or a respawn point to get a resupply of {WOOD} wood and {STONE} stone.")
+	string resupply_available = getTranslatedString("Go to a " + (this.getName() == "chopper" ? "knight" : "builder") +" shop or a respawn point to get a resupply of {WOOD} wood and {STONE} stone.") // changed here
 		.replace("{WOOD}", "" + wood_amount)
 		.replace("{STONE}", "" + stone_amount);
 

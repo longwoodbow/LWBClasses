@@ -1,4 +1,5 @@
 ﻿// BuilderShop.as
+// added items and classes.
 
 #include "Requirements.as"
 #include "ShopCommon.as"
@@ -157,6 +158,7 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	this.set_bool("shop available", this.isOverlapping(caller));
 }
 
+/*
 // fill bucket on collision
 void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 {
@@ -203,6 +205,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 		}
 	}
 }
+*/
 
 void onShopMadeItem(CBitStream@ params)
 {

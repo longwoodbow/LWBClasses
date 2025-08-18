@@ -1,5 +1,5 @@
 // Knight logic
-// changed DoAttack for barricades, see line 1326
+// changed DoAttack for barricades, see line 1315
 
 #include "ActivationThrowCommon.as"
 #include "KnightCommon.as";
@@ -259,17 +259,6 @@ void onTick(CBlob@ this)
 	bool walking = (this.isKeyPressed(key_left) || this.isKeyPressed(key_right));
 
 	const bool myplayer = this.isMyPlayer();
-
-	// description
-	/*
-	if (u_showtutorial && myplayer && !this.hasTag("spoke description"))
-	{
-		this.Chat("I have no change, but still important class!");
-		this.set_u8("emote", Emotes::off);
-		this.set_u32("emotetime", getGameTime() + 150);
-		this.Tag("spoke description");
-	}
-	*/
 
 	if (getNet().isClient() && !this.isInInventory() && myplayer)  //Knight charge cursor
 	{

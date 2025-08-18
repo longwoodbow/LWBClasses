@@ -23,7 +23,7 @@ void onInit(CBlob@ this)
 
 	// setup pickup menu wheel
 	WheelMenu@ menu = get_wheel_menu("pickup");
-	if (menu.entries.length == 0)
+	if (menu.entries.length == 0) // changed here
 	{
 		menu.option_notice = "Pickup";
 
@@ -78,6 +78,7 @@ void onInit(CBlob@ this)
 		menu.add_entry(PickupWheelMenuEntry("Fire Lances", "$mat_firelances", "mat_firelances", menuOffset));
 		menu.add_entry(PickupWheelMenuEntry("Flame Throwers", "$mat_flamethrowers$", "mat_flamethrowers", menuOffset));
 		menu.add_entry(PickupWheelMenuEntry("Cannon Balls", "$mat_cannonballs$", "mat_cannonballs", menuOffset));
+		menu.add_entry(PickupWheelMenuEntry("Handcannon Balls", "$mat_handcannonballs$", "mat_handcannonballs", menuOffset));
 
 		// misc
 		menu.add_entry(PickupWheelMenuEntry("Log", "$log$", "log", menuOffset));

@@ -3,7 +3,7 @@
 
 #include "ArcherCommon.as"
 #include "FireParticle.as"
-#include "PoisonParticle.as"
+#include "PoisonParticle.as" // added
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
 #include "KnockedCommon.as";
@@ -99,7 +99,7 @@ void LoadSprites(CSprite@ this)
 		anim.AddFrame(9); //water
 		anim.AddFrame(8); //fire
 		anim.AddFrame(14); //bomb
-		anim.AddFrame(16); //POISON
+		anim.AddFrame(16); //POISON added
 		arrow.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		arrow.SetAnimation("default");
 		arrow.SetVisible(false);
@@ -385,7 +385,7 @@ void onTick(CSprite@ this)
 		{
 			shiny.RotateBy(10, Vec2f());
 
-			shiny_offset.RotateBy(this.isFacingLeft() ?  shiny_angle : -shiny_angle);
+			shiny_offset.RotateBy(this.isFacingLeft() ?  shiny_angle : -shiny_angle, Vec2f(3, -2));
 			shiny.SetOffset(shiny_offset);
 		}
 	}
@@ -426,15 +426,18 @@ void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const
 			animname = "fired";
 		}
 
-		u16 frontframe = 0;
-		f32 temp = Maths::Min(archer.charge_time, ArcherParams::ready_time);
-		f32 ready_tween = temp / ArcherParams::ready_time;
-		armangle = armangle * ready_tween;
-		armOffset = Vec2f(-1.0f, 4.0f + config_offset + 2.0f * (1.0f - ready_tween));
-		setArmValues(frontarm, true, armangle, 0.1f, animname, Vec2f(-4.0f * sign, 0.0f), armOffset);
-		frontarm.animation.frame = frontframe;
+		if (archer.charge_state != ArcherParams::legolas_charging)
+		{
+			u16 frontframe = 0;
+			f32 temp = Maths::Min(archer.charge_time, ArcherParams::ready_time);
+			f32 ready_tween = temp / ArcherParams::ready_time;
+			armangle = armangle * ready_tween;
+			armOffset = Vec2f(-1.0f, 4.0f + config_offset + 2.0f * (1.0f - ready_tween));
+			setArmValues(frontarm, true, armangle, 0.1f, animname, Vec2f(-4.0f * sign, 0.0f), armOffset);
+			frontarm.animation.frame = frontframe;
 
-		setArmValues(arrow, false, 0, 0, "default", Vec2f(), Vec2f());
+			setArmValues(arrow, false, 0, 0, "default", Vec2f(), Vec2f());
+		}
 	}
 	else if (archer.charge_state == ArcherParams::readying)
 	{
@@ -465,8 +468,8 @@ void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const
 		if (archer.charge_state == ArcherParams::legolas_ready)
 		{
 			needs_shiny = true;
-			shiny_offset = Vec2f(-12.0f, 0.0f);   //TODO:
-			shiny_angle = armangle;
+			shiny_offset = Vec2f(-13.0f, -2.5f);
+			shiny_angle = arrowangle;
 		}
 	}
 	else
@@ -476,6 +479,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const
 	}
 
 	frontarm.SetRelativeZ(1.5f);
+	arrow.SetRelativeZ(1.4f);
 	setArmValues(this.getSpriteLayer("backarm"), true, armangle, -0.1f, "default", Vec2f(-4.0f * sign, 0.0f), armOffset);
 
 	// fire arrow particles
@@ -492,7 +496,7 @@ void DrawBow(CSprite@ this, CBlob@ blob, ArcherInfo@ archer, f32 armangle, const
 		offset.RotateBy(armangle);
 		makeFireParticle(frontarm.getWorldTranslation() + offset, 4);
 	}
-	if (arrowType == ArrowType::poison && hasArrows(blob) && getGameTime() % 12 == 0)
+	if (arrowType == ArrowType::poison && hasArrows(blob) && getGameTime() % 12 == 0) // added
 	{
 		Vec2f offset = Vec2f(12.0f, 0.0f);
 

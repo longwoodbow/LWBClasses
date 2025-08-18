@@ -12,7 +12,7 @@ bool noSound(CBlob@ b)
 
 	string name = b.getName();
 
-	return b.hasTag("projectile") || name == "heart" || name == "seed" || name == "food";
+	return b.hasTag("projectile") || name == "heart" || name == "seed" || name == "food"; // changed
 }
 
 void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitBlob, u8 customData)

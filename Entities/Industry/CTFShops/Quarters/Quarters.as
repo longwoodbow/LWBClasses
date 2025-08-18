@@ -1,4 +1,5 @@
 ﻿// Quarters.as
+// added items.
 
 #include "Requirements.as"
 #include "ShopCommon.as"
@@ -92,7 +93,7 @@ void onInit(CBlob@ this)
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f_zero);
-	this.set_Vec2f("shop menu size", Vec2f(ClassesConfig::butcher ? 7 : 5, 1));
+	this.set_Vec2f("shop menu size", Vec2f(ClassesConfig::butcher ? 7 : 5, 1)); // changed here
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
@@ -119,7 +120,7 @@ void onInit(CBlob@ this)
 		ShopItem@ s = addShopItem(this, "Burger - Full Health", "$quarters_burger$", "food", Descriptions::burger, true);
 		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::burger);
 	}
-	if(ClassesConfig::butcher)
+	if(ClassesConfig::butcher) // added
 	{
 		{
 			ShopItem@ s = addShopItem(this, "Oil Bottles", "$mat_cookingoils$", "mat_cookingoils", "Cooking Oil Bottle for Butcher.\nCan ignite somethings and cook steak and fishy to save.", true);

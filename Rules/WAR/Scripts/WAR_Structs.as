@@ -15,7 +15,7 @@ shared class WarPlayerInfo : PlayerInfo
 	bool canGetArcherItems;// and crossbowman
 	bool canGetKnightItems;
 	bool canGetBuilderItems;// rockthrower, chopper and warcrafter
-	bool canGetMusketmanItems;// and gunner
+	bool canGetMusketmanItems;// and gunner, added from here
 	bool canGetSpearmanItems;
 	bool canGetAssassinItems;
 	bool canGetMedicItems;
@@ -25,6 +25,8 @@ shared class WarPlayerInfo : PlayerInfo
 	bool canGetDuelistItems;
 	bool canGetButcherItems;
 	bool canGetDemolitionistItems;
+	bool canGetPikemanItems;
+	bool canGetHandcannonItems;
 
 	WarPlayerInfo() { Setup("", 0, ""); }
 	WarPlayerInfo(string _name, u8 _team, string _default_config) { Setup(_name, _team, _default_config); }
@@ -36,7 +38,7 @@ shared class WarPlayerInfo : PlayerInfo
 		wave_delay = 0;
 		deathDistanceToBase = -1.0f;
 		suicide = false;
-		canGetArcherItems = canGetKnightItems = canGetBuilderItems = canGetMusketmanItems = canGetSpearmanItems = canGetAssassinItems = canGetMedicItems = canGetWeaponthrowerItems = canGetFirelancerItems = canGetWarhammerItems = canGetDuelistItems = canGetButcherItems = canGetDemolitionistItems = true;
+		canGetArcherItems = canGetKnightItems = canGetBuilderItems = canGetMusketmanItems = canGetSpearmanItems = canGetAssassinItems = canGetMedicItems = canGetWeaponthrowerItems = canGetFirelancerItems = canGetWarhammerItems = canGetDuelistItems = canGetButcherItems = canGetDemolitionistItems = canGetPikemanItems = canGetHandcannonItems = true; // added here
 	}
 
 	bool opEquals(const WarPlayerInfo &in other) const

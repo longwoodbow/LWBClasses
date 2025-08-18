@@ -6,7 +6,7 @@ void onTick(CBlob@ this)
 	string[]@ names;
 	uint[]@ times;
 
-	if (this.get("stuck_chakram_names", @names) && this.get("stuck_chakram_times", @times))//alsp this line, not the arrow
+	if (this.get("stuck_chakram_names", @names) && this.get("stuck_chakram_times", @times))//also this line, not the arrow
 	{
 		CSprite@ sprite = this.getSprite();
 

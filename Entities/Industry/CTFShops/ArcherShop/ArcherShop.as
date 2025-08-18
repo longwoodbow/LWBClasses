@@ -1,4 +1,5 @@
 ﻿// ArcherShop.as
+// added items and classes.
 
 #include "Requirements.as"
 #include "ShopCommon.as"

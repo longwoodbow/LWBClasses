@@ -97,7 +97,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		{
 			addLoot(this, INDEX_KNIGHT, 1, 0);
 		}
-		else if (NAME == "crossbowman")
+		else if (NAME == "crossbowman") // added from here
 		{
 			addLoot(this, INDEX_CROSSBOWMAN, 1, 0);
 		}

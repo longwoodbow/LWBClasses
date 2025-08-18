@@ -36,6 +36,7 @@ const bool show_heatbar_when_idle = false;
 
 const string required_class = "builder";
 
+// added
 bool isAllowedClass(CBlob@ blob)
 {
 	string name = blob.getName();
@@ -510,7 +511,7 @@ void onRender(CSprite@ this)
 	CBlob@ holderBlob = holder.getBlob();
 	if (holderBlob is null){return;}
 
-	if (!isAllowedClass(holderBlob)){return;}
+	if (!isAllowedClass(holderBlob)){return;} // changed
 
 	Vec2f mousePos = getControls().getMouseWorldPos();
 	Vec2f blobPos = blob.getPosition();

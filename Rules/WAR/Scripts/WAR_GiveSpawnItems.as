@@ -175,7 +175,7 @@ CBlob@ MakeMaterial(CBlob@ blob,  const string &in name, const int quantity)
 
 void GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, WarPlayerInfo@ w_info)
 {
-	if (blob.getName() == "builder" || blob.getName() == "rockthrower" || blob.getName() == "warcrafter" || blob.getName() == "chopper")
+	if (blob.getName() == "builder" || blob.getName() == "rockthrower" || blob.getName() == "warcrafter" || blob.getName() == "chopper") // changed from here
 	{
 		if (sv_test)
 		{
@@ -302,7 +302,7 @@ void GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, WarPlayerInf
 			// make arrows out of air
 			if (w_info.canGetFirelancerItems)
 			{
-				MakeMaterial(blob, "mat_firelances", 15);
+				MakeMaterial(blob, "mat_firelances", 10);
 				w_info.canGetMusketmanItems = false;
 			}
 		}
@@ -355,6 +355,23 @@ void GiveSpawnResources(CRules@ this, CBlob@ blob, CPlayer@ player, WarPlayerInf
 	{
 		//nope
 	}
+	else if (blob.getName() == "pikeman")
+	{
+		//nope
+	}
+	else if (blob.getName() == "handcannon")
+	{
+		// keep order reversed for proper picking default ammo
+		if (!GiveFactoryItem(blob, "mat_bullets"))
+		{
+			// make arrows out of air
+			if (w_info.canGetHandcannonItems)
+			{
+				MakeMaterial(blob, "mat_handcannonballs", 10);
+				w_info.canGetHandcannonItems = false;
+			}
+		}
+	}
 }
 
 void onSetPlayer(CRules@ this, CBlob@ blob, CPlayer@ player)
@@ -394,7 +411,7 @@ void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ attacker, u8 customData
 				w_info.canGetArcherItems = true;
 				w_info.canGetKnightItems = true;
 				w_info.canGetBuilderItems = true;
-				w_info.canGetMusketmanItems = true;
+				w_info.canGetMusketmanItems = true; // added from here
 				w_info.canGetSpearmanItems = true;
 				w_info.canGetAssassinItems = true;
 				w_info.canGetMedicItems = true;
@@ -403,7 +420,8 @@ void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ attacker, u8 customData
 				w_info.canGetWarhammerItems = true;
 				w_info.canGetDuelistItems = true;
 				w_info.canGetButcherItems = true;
-				w_info.canGetDemolitionistItems = true;
+				w_info.canGetPikemanItems = true;
+				w_info.canGetHandcannonItems = true;
 			}
 		}
 	}

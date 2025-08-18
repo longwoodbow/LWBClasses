@@ -180,7 +180,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 	switch (customData)
 	{
 		case Hitters::builder:
-		case Hitters::hammer:
+		case Hitters::hammer: // changed from here
 	    case Hitters::mattock:
 			damage *= 2.0f;
 			break;
@@ -190,6 +190,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::stab:
 		case Hitters::rapier:
 		case Hitters::kitchenknife:
+		case Hitters::pike_thrust:
 			damage *= 1.5f;
 			break;
 		case Hitters::bomb:

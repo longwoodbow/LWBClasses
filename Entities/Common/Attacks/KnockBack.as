@@ -37,7 +37,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::burn:
 		case Hitters::crush:
 		case Hitters::spikes:
-		case Hitters::stab:
+		case Hitters::stab: // changed from here
 		case Hitters::poison:
 			scale = 0.0f; break;
 

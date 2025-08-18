@@ -203,8 +203,8 @@ float drawScoreboard(CPlayer@ localplayer, CPlayer@[] players, Vec2f topleft, CT
 		}
 		else
 		{
-			bool lwbIcons = p.getScoreboardTexture() == "LWBScoreboardIcons.png";
-			classTexture = lwbIcons ? "LWBScoreboardIcons.png" : "playercardicons.png";
+			bool lwbIcons = p.getScoreboardTexture() == "LWBScoreboardIcons.png"; // added
+			classTexture = lwbIcons ? "LWBScoreboardIcons.png" : "playercardicons.png"; // changed
 			classIndex = 0;
 
 			// why are player-scoreboard functions hardcoded
@@ -219,7 +219,7 @@ float drawScoreboard(CPlayer@ localplayer, CPlayer@[] players, Vec2f topleft, CT
 
 			if (dead)
 			{
-				if (lwbIcons) classTexture = "LWBScoreboardDeadIcons.png";
+				if (lwbIcons) classTexture = "LWBScoreboardDeadIcons.png"; // added
 				else classIndex += 8;
 			}
 		}

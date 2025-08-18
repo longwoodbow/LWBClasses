@@ -2,7 +2,7 @@
 
 //Items to highlight.
 //Added scripts ofr new classes.
-const string[] classes = {"builder", "knight", "archer", "rockthrower", "medic", "spearman", "assassin", "crossbowman", "musketman", "warcrafter", "butcher", "demolitionist", "chopper", "warhammer", "duelist", "weaponthrower", "firelancer", "gunner"};
+const string[] classes = {"builder", "knight", "archer", "rockthrower", "medic", "spearman", "assassin", "crossbowman", "musketman", "warcrafter", "butcher", "demolitionist", "chopper", "warhammer", "duelist", "weaponthrower", "firelancer", "gunner", "pikeman", "handcannon"};
 const string[][] highlight_items = {
 /* 0 */	{"mat_stone", "mat_wood", "mat_gold"}, //builder
 /* 1 */	{"mat_bombs", "mat_waterbombs", "keg"}, //knight
@@ -21,7 +21,9 @@ const string[][] highlight_items = {
 /* 14 */{}, //duelist
 /* 15 */{"mat_boomerangs", "mat_chakrams"}, //weaponthrower
 /* 16 */{"mat_firelances", "mat_flamethrowers"}, //firelancer
-/* 17 */{"mat_bullets"} //gunner
+/* 17 */{"mat_bullets"}, //gunner
+/* 18 */{}, //pikeman
+/* 19 */{"mat_handcannonballs"} //handcannon
 };
 
 //Disable highlighting for items with a map luminance lower than this

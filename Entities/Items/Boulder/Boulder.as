@@ -232,7 +232,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 
 f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitterBlob, u8 customData)
 {
-	if (customData == Hitters::sword ||
+	if (customData == Hitters::sword || // changed here
 		customData == Hitters::arrow ||
 		customData == Hitters::thrownrock ||
 		customData == Hitters::bayonet ||
@@ -244,7 +244,8 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		customData == Hitters::boomerang ||
 		customData == Hitters::stick ||
 		customData == Hitters::kitchenknife ||
-		customData == Hitters::thrownaxe)
+		customData == Hitters::thrownaxe ||
+		customData == Hitters::pike_thrust)
 	{
 		return damage *= 0.5f;
 	}

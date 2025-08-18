@@ -9,14 +9,15 @@ const int warmup_stone_amount = 80;
 const int matchtime_wood_amount = 100;
 const int matchtime_stone_amount = 30;
 
-//property
+//property, added from here
 const string SPAWN_ITEMS_TIMER_BUILDER       = "CTF SpawnItems Builder and More:";//Rockthrower, Warcrafter, Demolitonist and Chopper
 const string SPAWN_ITEMS_TIMER_ARCHER        = "CTF SpawnItems Archer and Crossbowman:";
 const string SPAWN_ITEMS_TIMER_MEDIC         = "CTF SpawnItems Medic:";
 const string SPAWN_ITEMS_TIMER_SPEARMAN      = "CTF SpawnItems Spearman:";
 const string SPAWN_ITEMS_TIMER_MUSKETMAN     = "CTF SpawnItems Musketman and Gunner:";
 const string SPAWN_ITEMS_TIMER_WEAPONTHROWER = "CTF SpawnItems Weaponthrower:";
-const string SPAWN_ITEMS_TIMER_FIRELANCER    = "CTF SpawnItems Firelancer:";
+const string SPAWN_ITEMS_TIMER_FIRELANCER    = "CTF SpawnItems Firelancer:";;
+const string SPAWN_ITEMS_TIMER_HANDCANNON    = "CTF SpawnItems Handcannon:";
 
 string base_name() { return "tent"; }
 
@@ -27,7 +28,7 @@ string getCTFTimerPropertyName(CPlayer@ p, string classname)
 	{
 		return SPAWN_ITEMS_TIMER_ARCHER + p.getUsername();
 	}
-	else if (classname == "medic")
+	else if (classname == "medic") // added from here
 	{
 		return SPAWN_ITEMS_TIMER_MEDIC + p.getUsername();
 	}
@@ -46,6 +47,10 @@ string getCTFTimerPropertyName(CPlayer@ p, string classname)
 	else if (classname == "firelancer")
 	{
 		return SPAWN_ITEMS_TIMER_FIRELANCER + p.getUsername();
+	}
+	else if (classname == "handcannon")
+	{
+		return SPAWN_ITEMS_TIMER_HANDCANNON + p.getUsername();
 	}
 	else// builder, rockthrower, warcrafter, demolitionist and chopper, or others? i don't wish
 	{

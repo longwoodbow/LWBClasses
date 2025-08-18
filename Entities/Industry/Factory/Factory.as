@@ -116,8 +116,8 @@ void BuildUpgradeMenu(CBlob@ this, CBlob@ caller)
 		//caller.Tag("dont clear menus"); // dont clear menus in StandardControls.as
 
 		CControls@ controls = caller.getControls();
-		//int size = Maths::Sqrt(all.names.length);
-		CGridMenu@ menu = CreateGridMenu(caller.getScreenPos() + Vec2f(0.0f, 50.0f), this, Vec2f(5, 4), getTranslatedString("Upgrade to..."));
+		int size = Maths::Sqrt(all.names.length);
+		CGridMenu@ menu = CreateGridMenu(caller.getScreenPos() + Vec2f(0.0f, 50.0f), this, Vec2f(5, 4), getTranslatedString("Upgrade to...")); // changed
 		if (menu !is null)
 		{
 			menu.deleteAfterClick = true;

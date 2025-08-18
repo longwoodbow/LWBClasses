@@ -1,24 +1,25 @@
+//#define SERVER_ONLY //not server only
+
 #include "KnockedCommon.as"
 #include "EatCommon.as";
 // now everyone can use medkit, but low effective.
 
 void onInit(CBlob@ this)
 {
-	this.set_s32("healTimer", getGameTime());
+	this.set_s32("healTimer", getGameTime()); // added
 	this.getCurrentScript().removeIfTag = "dead";
-	this.addCommandID("healSound");
+	this.addCommandID("healSound"); // added
 }
 
 void onTick(CBlob@ this)
 {
-	if (
-		getNet().isServer() &&
+	if (isServer() &&
 		this.isKeyJustPressed(key_eat) &&
 		!isKnocked(this) &&
 		this.getHealth() < this.getInitialHealth()
 	) {
 		CBlob @carried = this.getCarriedBlob();
-		if (carried !is null && (canEat(carried) || (carried.getName() == "mat_medkits"))) // consume what is held
+		if (carried !is null && (canEat(carried) || (carried.getName() == "mat_medkits"))) // consume what is held // changed from here
 		{
 			if (canEat(carried))
 			{
@@ -81,7 +82,7 @@ void onTick(CBlob@ this)
 	}
 }
 
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+void onCommand(CBlob@ this, u8 cmd, CBitStream @params) // added
 {
 	if (cmd == this.getCommandID("healSound"))
 	{

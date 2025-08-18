@@ -1,4 +1,4 @@
-// addad poison arrows
+// addad poison arrows and ignoring hitters
 #include "Hitters.as";
 #include "ShieldCommon.as";
 #include "FireParticle.as"
@@ -91,7 +91,7 @@ void onInit(CBlob@ this)
 		if (arrowType == ArrowType::bomb)
 			sprite.SetAnimation(anim);
 	}
-
+	// added
 	{
 		Animation@ anim = sprite.addAnimation("poison arrow", 0, false);
 		anim.AddFrame(16);
@@ -234,7 +234,7 @@ void onTick(CBlob@ this)
 		shape.SetStatic(true);
 	}
 
-	// poison arrow
+	// added, poison arrow
 	if (arrowType == ArrowType::poison)
 	{
 		const s32 gametime = getGameTime();
@@ -348,7 +348,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 
 		if (dmg > 0.0f)
 		{
-			//determine the hit type
+			// determine the hit type
 			// fire arrows still act as normal arrows
 			const u8 hit_type =
 				(arrowType == ArrowType::bomb) ? Hitters::bomb_arrow :
@@ -360,7 +360,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 			// for fire arrows, make fire
 			if (arrowType == ArrowType::fire && !this.hasTag("no_fire"))
 				this.server_Hit(blob, point1, initVelocity, 0.0f, Hitters::fire);
-			// or give poison
+			// or give poison, added
 			else if (arrowType == ArrowType::poison && !this.hasTag("no_poison"))
 				this.server_Hit(blob, point1, initVelocity, 0.0f, Hitters::poisoning);
 			
@@ -605,7 +605,7 @@ f32 ArrowHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlo
 				this.set_Vec2f("override fire pos", hitBlob.getPosition());
 			}
 		}
-		else if(arrowType == ArrowType::poison && hitShield)
+		else if (arrowType == ArrowType::poison && hitShield) // added
 		{
 			// as same as fire
 			this.Tag("no_poison");
@@ -894,7 +894,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		}
 	}
 
-	if (customData == Hitters::sword || customData == Hitters::spear || customData == Hitters::bayonet || customData == Hitters::stab || customData == Hitters::shovel || customData == Hitters::axe || customData == Hitters::warhammer || customData == Hitters::flail || customData == Hitters::rapier || customData == Hitters::kitchenknife || customData == Hitters::stick)
+	if (customData == Hitters::sword || customData == Hitters::spear || customData == Hitters::bayonet || customData == Hitters::stab || customData == Hitters::shovel || customData == Hitters::axe || customData == Hitters::warhammer || customData == Hitters::flail || customData == Hitters::rapier || customData == Hitters::kitchenknife || customData == Hitters::stick || customData == Hitters::pike_thrust || customData == Hitters::pike_slash) // changed
 	{
 		return 0.0f; //no cut arrows
 	}

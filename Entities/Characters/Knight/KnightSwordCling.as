@@ -6,7 +6,15 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 	// play cling sound if other knight attacked us
 	// dmg could be taken out here if we ever want to
 
-	if (hitterBlob.getPosition().x < this.getPosition().x && (hitterBlob.getName() == "knight" || hitterBlob.getName() == "spearman" || hitterBlob.getName() == "crossbowman" || hitterBlob.getName() == "warhammer" || hitterBlob.getName() == "duelist")) // knight and the left one (to play only once)
+	if (hitterBlob.getPosition().x < this.getPosition().x &&
+	(hitterBlob.getName() == "knight" || 
+	hitterBlob.getName() == "spearman" || 
+	hitterBlob.getName() == "assassin" || 
+	hitterBlob.getName() == "crossbowman" || 
+	hitterBlob.getName() == "chopper" || 
+	hitterBlob.getName() == "warhammer" || 
+	hitterBlob.getName() == "duelist" || 
+	hitterBlob.getName() == "pikeman")) // knight and the left one (to play only once) // changed
 	{
 		CSprite@ sprite = this.getSprite();
 		CSprite@ hsprite = hitterBlob.getSprite();
