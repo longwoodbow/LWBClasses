@@ -1,7 +1,7 @@
-// Musketman animations
+// Handcannon animations
 
 #include "BuilderCommon.as";
-#include "MusketmanCommon.as"
+#include "HandcannonCommon.as"
 #include "FireParticle.as"
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
@@ -47,13 +47,13 @@ void LoadSprites(CSprite@ this)
 	switch (armour)
 	{
 	case PLAYER_ARMOUR_STANDARD:
-		ensureCorrectRunnerTexture(this, "musketman", "Musketman");
+		ensureCorrectRunnerTexture(this, "handcannon", "Handcannon");
 		break;
 	case PLAYER_ARMOUR_CAPE:
-		ensureCorrectRunnerTexture(this, "musketman_cape", "MusketmanCape");
+		ensureCorrectRunnerTexture(this, "handcannon_cape", "HandcannonCape");
 		break;
 	case PLAYER_ARMOUR_GOLD:
-		ensureCorrectRunnerTexture(this, "musketman_gold",  "MusketmanGold");
+		ensureCorrectRunnerTexture(this, "handcannon_gold",  "HandcannonGold");
 		break;
 	}
 
@@ -67,6 +67,7 @@ void LoadSprites(CSprite@ this)
 	{
 		Animation@ anim = frontarm.addAnimation("default", 0, false);
 		anim.AddFrame(16);
+		anim.AddFrame(24);
 		frontarm.SetOffset(Vec2f(-1.0f, 5.0f + config_offset));
 		frontarm.SetAnimation("default");
 		frontarm.SetVisible(false);
@@ -95,6 +96,30 @@ void LoadSprites(CSprite@ this)
 		quiver.SetOffset(Vec2f(-10.0f, 2.0f + config_offset));
 		quiver.SetRelativeZ(-1.1f);
 	}
+
+	//grapple
+	this.RemoveSpriteLayer("hook");
+	CSpriteLayer@ hook = this.addTexturedSpriteLayer("hook", texname , 16, 8);
+
+	if (hook !is null)
+	{
+		Animation@ anim = hook.addAnimation("default", 0, false);
+		anim.AddFrame(178);
+		hook.SetRelativeZ(2.0f);
+		hook.SetVisible(false);
+	}
+
+	this.RemoveSpriteLayer("rope");
+	CSpriteLayer@ rope = this.addTexturedSpriteLayer("rope", texname , 32, 8);
+
+	if (rope !is null)
+	{
+		Animation@ anim = rope.addAnimation("default", 0, false);
+		anim.AddFrame(81);
+		rope.SetRelativeZ(-1.5f);
+		rope.SetVisible(false);
+	}
+
 }
 
 void setArmValues(CSpriteLayer@ arm, bool visible, f32 angle, f32 relativeZ, string anim, Vec2f around, Vec2f offset)
@@ -133,6 +158,7 @@ void onTick(CSprite@ this)
 		}
 
 		doQuiverUpdate(this, false, true);
+		doRopeUpdate(this, null, null);
 
 		Vec2f vel = blob.getVelocity();
 
@@ -152,14 +178,16 @@ void onTick(CSprite@ this)
 		return;
 	}
 
-	MusketmanInfo@ musketman;
-	if (!blob.get("musketmanInfo", @musketman))
+	HandcannonInfo@ handcannon;
+	if (!blob.get("handcannonInfo", @handcannon))
 	{
 		return;
 	}
 
+	doRopeUpdate(this, blob, handcannon);
+
 	// animations
-	const bool firing = IsFiring(blob) && !(musketman.charge_state == MusketmanParams::digging);
+	const bool firing = IsFiring(blob) && !(handcannon.charge_state == HandcannonParams::digging);
 	const bool left = blob.isKeyPressed(key_left);
 	const bool right = blob.isKeyPressed(key_right);
 	const bool up = blob.isKeyPressed(key_up);
@@ -168,6 +196,7 @@ void onTick(CSprite@ this)
 	bool crouch = false;
 
 	bool knocked = isKnocked(blob);
+	bool ignited = (handcannon.charge_state == HandcannonParams::ignited || handcannon.charge_state == HandcannonParams::firing) && !blob.isAttached() && !knocked;
 	Vec2f pos = blob.getPosition() + Vec2f(0, -2);
 	Vec2f aimpos = blob.getAimPos();
 	pos.x += this.isFacingLeft() ? 2 : -2;
@@ -197,7 +226,7 @@ void onTick(CSprite@ this)
 	{
 		this.SetAnimation("build");
 	}
-	else if (firing)
+	else if ((firing || ignited))
 	{
 		if (inair)
 		{
@@ -213,10 +242,10 @@ void onTick(CSprite@ this)
 			this.SetAnimation("shoot");
 		}
 	}
-	else if(musketman.charge_state == MusketmanParams::digging)
+	else if(handcannon.charge_state == HandcannonParams::digging)
 	{
-		this.SetAnimation("dig");
-		if (musketman.dig_delay <= 0)
+		this.SetAnimation("stab");
+		if (handcannon.dig_delay <= 0)
 			this.animation.SetFrameIndex(0);
 	}
 	else if (inair)
@@ -281,10 +310,13 @@ void onTick(CSprite@ this)
 		defaultIdleAnim(this, blob, direction);
 	}
 
+	SColor lightColor = SColor(255, 255, Maths::Min(255, Maths::Max(8 * handcannon.charge_time - HandcannonParams::ignite_period, 0)), 0);
+	blob.SetLightColor(lightColor);
+
 	//arm anims
 	Vec2f armOffset = Vec2f(-1.0f, 4.0f + config_offset);
 
-	if (firing && !this.isAnimation("build"))
+	if ((firing || ignited) && !this.isAnimation("build") && !this.isAnimation("dig"))
 	{
 		f32 armangle = -angle;
 
@@ -303,7 +335,7 @@ void onTick(CSprite@ this)
 			armangle += 360.0f;
 		}
 
-		DrawBow(this, blob, musketman, armangle, armOffset);
+		DrawCannon(this, blob, handcannon, armangle, armOffset, lightColor);
 	}
 	else
 	{
@@ -311,7 +343,7 @@ void onTick(CSprite@ this)
 		setArmValues(this.getSpriteLayer("backarm"), false, 0.0f, -0.1f, "default", Vec2f(0, 0), armOffset);
 	}
 
-	doQuiverUpdate(this, hasBarricades(blob), true);
+	DrawCannonEffects(this, blob, handcannon, ignited);
 
 	//set the head anim
 	if (knocked || crouch)
@@ -332,20 +364,47 @@ void onTick(CSprite@ this)
 
 }
 
-void DrawBow(CSprite@ this, CBlob@ blob, MusketmanInfo@ musketman, f32 armangle, Vec2f armOffset)
+void sparks(Vec2f at, f32 angle, f32 speed, SColor color)
+{
+	Vec2f vel = getRandomVelocity(angle + 90.0f, speed, 25.0f);
+	at.y -= 2.5f;
+	ParticlePixel(at, vel, color, true, 119);
+}
+
+void DrawCannon(CSprite@ this, CBlob@ blob, HandcannonInfo@ handcannon, f32 armangle, Vec2f armOffset, SColor lightColor)
 {
 	f32 sign = (this.isFacingLeft() ? 1.0f : -1.0f);
 	CSpriteLayer@ frontarm = this.getSpriteLayer("frontarm");
 
 	u16 frontframe = 0;
-	f32 temp = Maths::Min(musketman.charge_time, MusketmanParams::ready_time);
-	f32 ready_tween = temp / MusketmanParams::ready_time;
+	f32 temp = Maths::Min(handcannon.charge_time, HandcannonParams::ready_time);
+	f32 ready_tween = temp / HandcannonParams::ready_time;
 	armangle = armangle * ready_tween;
 	armOffset = Vec2f(-1.0f, 4.0f + config_offset + 2.0f * (1.0f - ready_tween));
 	setArmValues(frontarm, true, armangle, 0.1f, "default", Vec2f(-4.0f * sign, 0.0f), armOffset);
+	frontarm.animation.frame = (handcannon.charge_state == HandcannonParams::ignited || handcannon.charge_state == HandcannonParams::firing) ? 1 : 0;
 
 	frontarm.SetRelativeZ(1.5f);
 	setArmValues(this.getSpriteLayer("backarm"), true, armangle, -0.1f, "default", Vec2f(-4.0f * sign, 0.0f), armOffset);
+
+	// fire cannon particles
+	
+	if (handcannon.charge_state == HandcannonParams::firing)
+	{
+		if (XORRandom(2) == 0)
+			{
+			Vec2f offset = Vec2f(0.0f, -4.0f);
+
+			if (this.isFacingLeft())
+			{
+				offset.x = -offset.x;
+			}
+
+			offset.RotateBy(armangle);
+
+			sparks(frontarm.getWorldTranslation() + offset, armangle, 3.5f + (XORRandom(10) / 5.0f), lightColor);
+		}
+	}
 }
 
 bool IsFiring(CBlob@ blob)
@@ -353,6 +412,69 @@ bool IsFiring(CBlob@ blob)
 	return blob.isKeyPressed(key_action1);
 }
 
+void DrawCannonEffects(CSprite@ this, CBlob@ blob, HandcannonInfo@ handcannon, bool ignited)
+{
+	// set fire light
+
+	if (!blob.isAttached() && ignited && hasBalls(blob))
+	{
+		blob.SetLight(true);
+		blob.SetLightRadius(blob.getRadius() * 2.0f);
+	}
+	else
+	{
+		blob.SetLight(false);
+	}
+
+	//quiver
+	doQuiverUpdate(this, hasBarricades(blob), true);
+}
+
+void doRopeUpdate(CSprite@ this, CBlob@ blob, HandcannonInfo@ handcannon)
+{
+	CSpriteLayer@ rope = this.getSpriteLayer("rope");
+	CSpriteLayer@ hook = this.getSpriteLayer("hook");
+
+	bool visible = handcannon !is null && handcannon.grappling;
+
+	rope.SetVisible(visible);
+	hook.SetVisible(visible);
+	if (!visible)
+	{
+		return;
+	}
+
+	Vec2f adjusted_pos = Vec2f(handcannon.grapple_pos.x, Maths::Max(0.0, handcannon.grapple_pos.y));
+	Vec2f off = adjusted_pos - blob.getPosition();
+
+	f32 ropelen = Maths::Max(0.1f, off.Length() / 32.0f);
+	if (ropelen > 200.0f)
+	{
+		rope.SetVisible(false);
+		hook.SetVisible(false);
+		return;
+	}
+
+	rope.ResetTransform();
+	rope.ScaleBy(Vec2f(ropelen, 1.0f));
+
+	rope.TranslateBy(Vec2f(ropelen * 16.0f, 0.0f));
+
+	rope.RotateBy(-off.Angle() , Vec2f());
+
+	hook.ResetTransform();
+	if (handcannon.grapple_id == 0xffff) //still in air
+	{
+		handcannon.cache_angle = -handcannon.grapple_vel.Angle();
+	}
+	hook.RotateBy(handcannon.cache_angle , Vec2f());
+
+	hook.TranslateBy(off);
+	hook.SetIgnoreParentFacing(true);
+	hook.SetFacingLeft(false);
+
+	//GUI::DrawLine(blob.getPosition(), handcannon.grapple_pos, SColor(255,255,255,255));
+}
 
 void doQuiverUpdate(CSprite@ this, bool has_arrows, bool quiver)
 {
@@ -441,10 +563,10 @@ void onGib(CSprite@ this)
 	vel.y -= 3.0f;
 	f32 hp = Maths::Min(Maths::Abs(blob.getHealth()), 2.0f) + 1.0f;
 	const u8 team = blob.getTeamNum();
-	CParticle@ Body     = makeGibParticle("Entities/Characters/Musketman/MusketmanGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Arm      = makeGibParticle("Entities/Characters/Musketman/MusketmanGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2 , 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
-	CParticle@ Shield   = makeGibParticle("Entities/Characters/Musketman/MusketmanGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
-	CParticle@ Sword    = makeGibParticle("Entities/Characters/Musketman/MusketmanGibs.png", pos, vel + getRandomVelocity(90, hp + 1 , 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle@ Body     = makeGibParticle("Entities/Characters/Handcannon/HandcannonGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle@ Arm      = makeGibParticle("Entities/Characters/Handcannon/HandcannonGibs.png", pos, vel + getRandomVelocity(90, hp - 0.2 , 80), 1, 0, Vec2f(16, 16), 2.0f, 20, "/BodyGibFall", team);
+	CParticle@ Shield   = makeGibParticle("Entities/Characters/Handcannon/HandcannonGibs.png", pos, vel + getRandomVelocity(90, hp , 80), 2, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
+	CParticle@ Sword    = makeGibParticle("Entities/Characters/Handcannon/HandcannonGibs.png", pos, vel + getRandomVelocity(90, hp + 1 , 80), 3, 0, Vec2f(16, 16), 2.0f, 0, "Sounds/material_drop.ogg", team);
 }
 
 
@@ -591,7 +713,7 @@ void onRender(CSprite@ this)
 
 	// draw tile cursor
 
-	if (blob.isKeyPressed(key_action2))
+	if (blob.isKeyPressed(key_action2) && isBuildTime(blob))
 	{
 		CMap@ map = blob.getMap();
 		Vec2f position = blob.getPosition();

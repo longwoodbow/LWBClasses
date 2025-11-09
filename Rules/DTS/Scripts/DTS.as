@@ -124,6 +124,13 @@ shared class DTSSpawns : RespawnSystem
 				player.server_setTeamNum(p_info.team);
 			}
 
+			// reset class if die as advanced class
+			string className = p_info.blob_name;
+			if (className == "pikeman" || className == "handcannon")
+			{
+				p_info.blob_name = randomClass(true);
+			}
+
 			// remove previous players blob
 			if (player.getBlob() !is null)
 			{
@@ -632,17 +639,10 @@ shared class DTSCore : RulesCore
 
 		string className = blob.getName();
 
-		if (className == "archer" ||
-			className == "crossbowman" ||
-			className == "musketman" ||
-			//className == "rockthrower" ||
-			className == "medic" ||
-			className == "spearman" ||
-			className == "weaponthrower" ||
-			className == "firelancer" ||
-			className == "gunner")
+		string ammoName = getClassAmmo(className);
+
+		if (ammoName != "")
 		{
-			string ammoName = getClassAmmo(className);
 			// first check if its in surroundings
 			CBlob@[] blobsInRadius;
 			CMap@ map = getMap();
@@ -690,6 +690,7 @@ shared class DTSCore : RulesCore
 		else if(name == "spearman") return"mat_spears";
 		else if(name == "weaponthrower") return"mat_boomerangs";
 		else if(name == "firelancer") return"mat_firelances";
+		else if(name == "handcannon") return"mat_handcannonballs";
 		else return "";
 	}
 };

@@ -44,6 +44,8 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			case Hitters::flail:
 			case Hitters::rapier:
 			case Hitters::kitchenknife:
+			case Hitters::pike_thrust:
+			case Hitters::pike_slash:
 				if (damage > 1.0f || force)
 				{
 					time = 20;
@@ -64,6 +66,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 				time = 15; break;
 
 			case Hitters::bomb:
+			case Hitters::handcannon:
 				time = 20; break;
 
 			case Hitters::spikes:

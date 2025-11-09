@@ -34,6 +34,9 @@ bool canBlockThisType(u8 type) // this function needs to use a tag on the hitter
 	       type == Hitters::stick ||
 	       type == Hitters::kitchenknife ||
 	       type == Hitters::thrownaxe ||
+	       type == Hitters::pike_thrust ||
+	       type == Hitters::pike_slash ||
+	       type == Hitters::handaxe ||
 	       isExplosionHitter(type);
 }
 

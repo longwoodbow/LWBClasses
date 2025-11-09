@@ -76,6 +76,11 @@ namespace DTSConfig
 	const int cost_firelances       = 10;
 	const int cost_flamethrowers    = 40;
     
+	const int cost_pike             = 300;
+	const int cost_handcannon       = 300;
+	const int cost_handcannonballs  = 10;
+    
+
 	const int cost_boulder          = 40;
 	const int cost_burger           = 30;
 	const int cost_sponge           = 15;
@@ -91,6 +96,7 @@ namespace DTSConfig
 	const int cost_drill            = 50;
 	const int cost_cookingoils      = 40;
 	const int cost_poisonmeats      = 30;
+
 	const int cost_catapult         = 80;
 	const int cost_ballista         = -1;
 	const int cost_crankedgun       = 250;
@@ -102,5 +108,5 @@ namespace DTSConfig
 
 	// menu size
 	const int menu_width            = 8;
-	const int menu_height           = 7;
+	const int menu_height           = 8;
 }

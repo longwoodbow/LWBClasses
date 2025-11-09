@@ -18,6 +18,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::acid:
 		case Hitters::ram:
 		case Hitters::thrownaxe:
+		case Hitters::handaxe:
 			dmg *= 2.0f;
 			break;
 
@@ -25,6 +26,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::warhammer:
 		case Hitters::flail:
 		case Hitters::chakram:
+		case Hitters::pike_slash:
 			dmg *= 0.5f;
 			break;
 
@@ -39,6 +41,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::boomerang:
 		case Hitters::stick:
 		case Hitters::kitchenknife:
+		case Hitters::pike_thrust:
 
 			if (dmg <= 1.0f)
 			{
@@ -55,6 +58,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			break;
 
 		case Hitters::bomb:
+		case Hitters::handcannon:
 			dmg *= 1.40f;
 			break;
 

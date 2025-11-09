@@ -27,6 +27,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			case Hitters::axe:
 			case Hitters::rapier:
 			case Hitters::kitchenknife:
+			case Hitters::pike_thrust:
 				Sound::Play("SwordKill", this.getPosition());
 				break;
 

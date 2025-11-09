@@ -62,12 +62,15 @@ void MakeTradeMenu(CBlob@ trader)
 	addItemForCoin(trader, "Water Arrows", DTSConfig::cost_waterarrows, true, "$mat_waterarrows$", "mat_waterarrows", Descriptions::waterarrows);
 	addItemForCoin(trader, "Fire Arrows", DTSConfig::cost_firearrows, true, "$mat_firearrows$", "mat_firearrows", Descriptions::firearrows);
 	addItemForCoin(trader, "Bomb Arrow", DTSConfig::cost_bombarrows, true, "$mat_bombarrows$", "mat_bombarrows", Descriptions::bombarrows);
-	if(ClassesConfig::musketman || ClassesConfig::gunner)addItemForCoin(trader, "Bullets", DTSConfig::cost_bullets, true, "$mat_bullets$", "mat_bullets", "Lead ball and gunpowder in a paper for Musketman.");
+	addItemForCoin(trader, "Bullets", DTSConfig::cost_bullets, true, "$mat_bullets$", "mat_bullets", "Lead ball and gunpowder in a paper for Musketman.");
 	if(ClassesConfig::musketman)addItemForCoin(trader, "Barricade ", DTSConfig::cost_barricades, true, "$mat_barricades$", "mat_barricades", "Ballicade frames for Musketman.");
 	if(ClassesConfig::weaponthrower)addItemForCoin(trader, "Boomerangs", DTSConfig::cost_boomerangs, true, "$mat_boomerangs$", "mat_boomerangs", "Boomerangs for Weapon Thrower.\nReal battle boomerangs don't return because it is danger.");
 	if(ClassesConfig::weaponthrower)addItemForCoin(trader, "Chakrams", DTSConfig::cost_chakrams, true, "$mat_chakrams$", "mat_chakrams", "Chakrams for Weapon Thrower.\nHas no long range but powerful and can break blocks.");
 	if(ClassesConfig::firelancer)addItemForCoin(trader, "Fire Lances", DTSConfig::cost_firelances, true, "$mat_firelances$", "mat_firelances", "Chinese boomsticks for Fire Lancer.");
 	if(ClassesConfig::firelancer)addItemForCoin(trader, "Flame Thrower", DTSConfig::cost_flamethrowers, true, "$mat_flamethrowers$", "mat_flamethrowers", "Fire Lance shaped flame thrower for Fire Lancer.");
+	//advanced stuff
+	if(ClassesConfig::handcannon)addItemForCoin(trader, "Handcannon", DTSConfig::cost_handcannon, true, "$item_handcannon$", "item_handcannon", "Become handcannon, the advanced ranged class.");
+	if(ClassesConfig::handcannon)addItemForCoin(trader, "Handcannon Balls", DTSConfig::cost_handcannonballs, true, "$mat_handcannonballs$", "mat_handcannonballs", "Balls for handcannon.");
 	//utility stuff
 	if(ClassesConfig::rockthrower)addItemForCoin(trader, "Wood", DTSConfig::cost_wood, true, "$mat_wood$", "mat_wood", Descriptions::wood);
 	if(ClassesConfig::rockthrower)addItemForCoin(trader, "Stone", DTSConfig::cost_stone, true, "$mat_stone$", "mat_stone", Descriptions::stone);

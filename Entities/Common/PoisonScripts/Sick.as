@@ -2,7 +2,7 @@
 #include "PoisonCommon.as";
 #include "RunnerCommon.as";
 
-void onInit(CMovement@ this)
+void onInit(CBlob@ this)
 {
 	this.getCurrentScript().tickIfTag = poisoning_tag;
 	this.getCurrentScript().removeIfTag = "dead";
@@ -10,13 +10,16 @@ void onInit(CMovement@ this)
 
 void onTick(CBlob@ this)
 {
-	if(this.hasTag(poisoning_tag))
+	if (this.getHealth() > 0.0f)
 	{
-		RunnerMoveVars@ moveVars;
-		if (this.get("moveVars", @moveVars))
+		if(this.hasTag(poisoning_tag)) // double check
 		{
-			moveVars.walkFactor *= 0.5f;
-			moveVars.jumpFactor *= 0.5f;
+			RunnerMoveVars@ moveVars;
+			if (this.get("moveVars", @moveVars))
+			{
+				moveVars.walkFactor *= 0.5f;
+				moveVars.jumpFactor *= 0.5f;
+			}
 		}
 	}
 }

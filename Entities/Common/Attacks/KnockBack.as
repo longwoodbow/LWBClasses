@@ -57,6 +57,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::stick:
 		case Hitters::warhammer:
 		case Hitters::flail:
+		case Hitters::pike_slash:
 			scale = 2.0f; break;
 
 		case Hitters::cata_stones:

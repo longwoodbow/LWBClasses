@@ -1,7 +1,7 @@
-// Musketman logic
+// Handcannon logic
 
 #include "BuilderCommon.as";
-#include "MusketmanCommon.as"
+#include "HandcannonCommon.as"
 #include "ActivationThrowCommon.as"
 #include "KnockedCommon.as"
 #include "Hitters.as"
@@ -11,35 +11,41 @@
 #include "Requirements.as"
 #include "PlacementCommon.as";
 #include "EmotesCommon.as";
+#include "RedBarrierCommon.as";
+#include "StandardControlsCommon.as";
 
 void onInit(CBlob@ this)
 {
-	MusketmanInfo musketman;
-	this.set("musketmanInfo", @musketman);
+	HandcannonInfo handcannon;
+	this.set("handcannonInfo", @handcannon);
 
-	this.set_bool("has_bullet", false);
+	this.set_bool("has_ball", false);
 	this.set_f32("gib health", -1.5f);
 	this.Tag("player");
 	this.Tag("flesh");
-
-	//centered on bullets
+	//centered on balls
 	//this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
 	//centered on items
 	this.set_Vec2f("inventory offset", Vec2f(0.0f, 0.0f));
 
 	//no spinning
 	this.getShape().SetRotationsAllowed(false);
-	this.getSprite().SetEmitSound("musketman_bow_pull.ogg");
+	this.getSprite().SetEmitSound("/Sparkle.ogg");
 	this.addCommandID("play fire sound");
+	this.addCommandID("sync ignite");
+	this.addCommandID("sync ignite client");
 	this.addCommandID("request shoot");
+	this.addCommandID("axe attack");
 	this.getShape().getConsts().net_threshold_multiplier = 0.5f;
-	AddIconToken("$Shovel$", "LWBHelpIcons.png", Vec2f(16, 16), 12);
-	AddIconToken("$Help_Bullet$", "LWBHelpIcons.png", Vec2f(8, 16), 23);
+	//AddIconToken("$Shovel$", "LWBHelpIcons.png", Vec2f(16, 16), 12);
+	//AddIconToken("$Help_Ball$", "LWBHelpIcons.png", Vec2f(8, 16), 23);
 
-	SetHelp(this, "help self hide", "musketman", getTranslatedString("Hide    $KEY_S$"), "", 255);
-	SetHelp(this, "help self action2", "musketman", getTranslatedString("$Shovel$ Dig    $RMB$"), "", 255);
+	this.addCommandID(grapple_sync_cmd);
 
-	//add a command ID for each bullet type
+	SetHelp(this, "help self hide", "handcannon", getTranslatedString("Hide    $KEY_S$"), "", 255);
+	SetHelp(this, "help self action2", "handcannon", getTranslatedString("$Grapple$ Grappling hook    $RMB$"), "", 255);
+
+	//add a command ID for each ball type
 
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
@@ -49,11 +55,217 @@ void onSetPlayer(CBlob@ this, CPlayer@ player)
 {
 	if (player !is null)
 	{
-		player.SetScoreboardVars("LWBScoreboardIcons.png", 3, Vec2f(16, 16));
+		player.SetScoreboardVars("LWBScoreboardIcons.png", 16, Vec2f(16, 16));
 	}
 }
 
-void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVars)
+void ManageGrapple(CBlob@ this, HandcannonInfo@ handcannon)
+{
+	CSprite@ sprite = this.getSprite();
+	u8 charge_state = handcannon.charge_state;
+	Vec2f pos = this.getPosition();
+
+	const bool right_click = this.isKeyJustPressed(key_action2);
+
+	if (right_click && getBuildMode(this) == HandcannonBuilding::nothing)
+	{
+		// cancel charging
+		if (charge_state != HandcannonParams::not_aiming &&
+		    charge_state != HandcannonParams::ignited &&
+		    charge_state != HandcannonParams::firing) // allow grapple right after firing
+		{
+			charge_state = HandcannonParams::not_aiming;
+			handcannon.charge_time = 0;
+			sprite.SetEmitSoundPaused(true);
+			sprite.PlaySound("PopIn.ogg");
+		}
+		else if (canSend(this) || isServer()) //otherwise grapple
+		{
+			handcannon.grappling = true;
+			handcannon.grapple_id = 0xffff;
+			handcannon.grapple_pos = pos;
+
+			handcannon.grapple_ratio = 1.0f; //allow fully extended
+
+			Vec2f direction = this.getAimPos() - pos;
+
+			//aim in direction of cursor
+			f32 distance = direction.Normalize();
+			if (distance > 1.0f)
+			{
+				handcannon.grapple_vel = direction * handcannon_grapple_throw_speed;
+			}
+			else
+			{
+				handcannon.grapple_vel = Vec2f_zero;
+			}
+
+			SyncGrapple(this);
+		}
+
+		handcannon.charge_state = charge_state;
+	}
+
+	if (handcannon.grappling)
+	{
+		//update grapple
+		//TODO move to its own script?
+
+		if (!this.isKeyPressed(key_action2))
+		{
+			if (canSend(this) || isServer())
+			{
+				handcannon.grappling = false;
+				SyncGrapple(this);
+			}
+		}
+		else
+		{
+			const f32 handcannon_grapple_range = handcannon_grapple_length * handcannon.grapple_ratio;
+			const f32 handcannon_grapple_force_limit = this.getMass() * handcannon_grapple_accel_limit;
+
+			CMap@ map = this.getMap();
+
+			//reel in
+			//TODO: sound
+			if (handcannon.grapple_ratio > 0.2f)
+				handcannon.grapple_ratio -= 1.0f / getTicksASecond();
+
+			//get the force and offset vectors
+			Vec2f force;
+			Vec2f offset;
+			f32 dist;
+			{
+				force = handcannon.grapple_pos - this.getPosition();
+				dist = force.Normalize();
+				f32 offdist = dist - handcannon_grapple_range;
+				if (offdist > 0)
+				{
+					offset = force * Maths::Min(8.0f, offdist * handcannon_grapple_stiffness);
+					force *= Maths::Min(handcannon_grapple_force_limit, Maths::Max(0.0f, offdist + handcannon_grapple_slack) * handcannon_grapple_force);
+				}
+				else
+				{
+					force.Set(0, 0);
+				}
+			}
+
+			//left map? too long? close grapple
+			if (handcannon.grapple_pos.x < 0 ||
+			        handcannon.grapple_pos.x > (map.tilemapwidth)*map.tilesize ||
+			        dist > handcannon_grapple_length * 3.0f)
+			{
+				if (canSend(this) || isServer())
+				{
+					handcannon.grappling = false;
+					SyncGrapple(this);
+				}
+			}
+			else if (handcannon.grapple_id == 0xffff) //not stuck
+			{
+				const f32 drag = map.isInWater(handcannon.grapple_pos) ? 0.7f : 0.90f;
+				const Vec2f gravity(0, 1);
+
+				handcannon.grapple_vel = (handcannon.grapple_vel * drag) + gravity - (force * (2 / this.getMass()));
+
+				Vec2f next = handcannon.grapple_pos + handcannon.grapple_vel;
+				next -= offset;
+
+				Vec2f dir = next - handcannon.grapple_pos;
+				f32 delta = dir.Normalize();
+				bool found = false;
+				const f32 step = map.tilesize * 0.5f;
+				while (delta > 0 && !found) //fake raycast
+				{
+					if (delta > step)
+					{
+						handcannon.grapple_pos += dir * step;
+					}
+					else
+					{
+						handcannon.grapple_pos = next;
+					}
+					delta -= step;
+					found = checkGrappleStep(this, handcannon, map, dist);
+				}
+
+			}
+			else //stuck -> pull towards pos
+			{
+
+				//wallrun/jump reset to make getting over things easier
+				//at the top of grapple
+				if (this.isOnWall()) //on wall
+				{
+					//close to the grapple point
+					//not too far above
+					//and moving downwards
+					Vec2f dif = pos - handcannon.grapple_pos;
+					if (this.getVelocity().y > 0 &&
+					        dif.y > -10.0f &&
+					        dif.Length() < 24.0f)
+					{
+						//need move vars
+						RunnerMoveVars@ moveVars;
+						if (this.get("moveVars", @moveVars))
+						{
+							moveVars.walljumped_side = Walljump::NONE;
+						}
+					}
+				}
+
+				CBlob@ b = null;
+				if (handcannon.grapple_id != 0)
+				{
+					@b = getBlobByNetworkID(handcannon.grapple_id);
+					if (b is null)
+					{
+						handcannon.grapple_id = 0;
+					}
+				}
+
+				if (b !is null)
+				{
+					handcannon.grapple_pos = b.getPosition();
+					if (b.isKeyJustPressed(key_action1) ||
+					        b.isKeyJustPressed(key_action2) ||
+					        this.isKeyPressed(key_use))
+					{
+						if (canSend(this) || isServer())
+						{
+							handcannon.grappling = false;
+							SyncGrapple(this);
+						}
+					}
+				}
+				else if (shouldReleaseGrapple(this, handcannon, map))
+				{
+					if (canSend(this) || isServer())
+					{
+						handcannon.grappling = false;
+						SyncGrapple(this);
+					}
+				}
+
+				this.AddForce(force);
+				Vec2f target = (this.getPosition() + offset);
+				if (!map.rayCastSolid(this.getPosition(), target) &&
+					(this.getVelocity().Length() > 2 || !this.isOnMap()))
+				{
+					this.setPosition(target);
+				}
+
+				if (b !is null)
+					b.AddForce(-force * (b.getMass() / this.getMass()));
+
+			}
+		}
+
+	}
+
+}
+
+void ManageCannon(CBlob@ this, HandcannonInfo@ handcannon, RunnerMoveVars@ moveVars)
 {
 	//are we responsible for this actor?
 	bool ismyplayer = this.isMyPlayer();
@@ -68,58 +280,64 @@ void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVar
 	}
 	//
 	CSprite@ sprite = this.getSprite();
-	bool hasbullet = musketman.has_bullet;
-	s8 charge_time = musketman.charge_time;
-	u8 charge_state = musketman.charge_state;
+	bool hasball = handcannon.has_ball;
+	s8 charge_time = handcannon.charge_time;
+	u8 charge_state = handcannon.charge_state;
 	const bool pressed_action2 = this.isKeyPressed(key_action2);
 	Vec2f pos = this.getPosition();
 	bool isNotBuilding = !isBuildTime(this);
 
-	// cancel charging
-	if (this.isKeyJustPressed(key_action2) && charge_state != MusketmanParams::not_aiming && charge_state != MusketmanParams::digging)
-	{
-		charge_state = MusketmanParams::not_aiming;
-		musketman.charge_time = 0;
-		sprite.SetEmitSoundPaused(true);
-		sprite.PlaySound("PopIn.ogg");
-	}
-
 	if (responsible)
 	{
-		hasbullet = hasBullets(this);
+		hasball = hasBalls(this);
 
-		if (hasbullet != this.get_bool("has_bullet"))
+		if (hasball != this.get_bool("has_ball"))
 		{
-			this.set_bool("has_bullet", hasbullet);
-			this.Sync("has_bullet", isServer());
+			this.set_bool("has_ball", hasball);
+			this.Sync("has_ball", isServer());
 		}
 	}
 
-	if (charge_state == MusketmanParams::digging)
+	if (charge_state == HandcannonParams::ignited) // fast balls
+	{
+		if (!hasball)
+		{
+			charge_state = HandcannonParams::not_aiming;
+			charge_time = 0;
+		}
+		else
+		{
+			charge_state = HandcannonParams::firing;
+			this.set_s32("shoot time", getGameTime() + HandcannonParams::shoot_period);
+			if (responsible) this.SendCommand(this.getCommandID("sync ignite"));
+		}
+	}
+
+	if (charge_state == HandcannonParams::digging)
 	{
 		moveVars.walkFactor *= 0.5f;
 		moveVars.jumpFactor *= 0.5f;
 		moveVars.canVault = false;
-		musketman.dig_delay--;
-		if(musketman.dig_delay == 0)
+		handcannon.dig_delay--;
+		if(handcannon.dig_delay == 0)
 		{
-			charge_state = MusketmanParams::not_aiming;
-			if(this.isKeyPressed(key_action1))
+			charge_state = HandcannonParams::not_aiming;
+			if(this.isKeyPressed(key_action1) && isNotBuilding)
 			{
-				charge_state = MusketmanParams::readying;
-				hasbullet = hasBullets(this);
+				charge_state = HandcannonParams::igniting;
+				hasball = hasBalls(this);
 
 				if (responsible)
 				{
-					this.set_bool("has_bullet", hasbullet);
-					this.Sync("has_bullet", isServer());
+					this.set_bool("has_ball", hasball);
+					this.Sync("has_ball", isServer());
 				}
 
 				charge_time = 0;
 
-				if (!hasbullet)
+				if (!hasball)
 				{
-					charge_state = MusketmanParams::no_bullets;
+					charge_state = HandcannonParams::no_balls;
 
 					if (ismyplayer)   // playing annoying no ammo sound
 					{
@@ -129,53 +347,66 @@ void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVar
 				}
 				else
 				{
-					sprite.PlaySound("musketman_arrow_draw_end.ogg");
-					sprite.RewindEmitSound();
-					sprite.SetEmitSoundPaused(false);
-
-					if (!ismyplayer)   // lower the volume of other players charging  - ooo good idea
-					{
-						sprite.SetEmitSoundVolume(0.5f);
-					}
+					sprite.PlaySound("SparkleShort.ogg");// fire arrow sound
 				}
 			}
 		}
 	}
+	//charged - no else (we want to check the very same tick)
+	else if (charge_state == HandcannonParams::firing) // based legolas system
+	{
+		moveVars.walkFactor *= 0.5f;
+
+		if(charge_time < HandcannonParams::ignite_period + HandcannonParams::shoot_period) charge_time++;//for cursor
+		if(!hasball || this.get_s32("shoot time") <= getGameTime())//ball lost or shoot time passed
+		{
+			if (this.get_s32("shoot time") == getGameTime())//just time
+				ClientFire(this);
+
+			bool pressed = this.isKeyPressed(key_action1);
+			charge_state = pressed ? HandcannonParams::igniting : HandcannonParams::not_aiming;
+			charge_time = 0;
+
+			//mute fuse sound
+			sprite.RewindEmitSound();
+			sprite.SetEmitSoundPaused(true);
+		}
+
+	}
 	else if (this.isKeyPressed(key_action1) && isNotBuilding)
 	{
 		moveVars.walkFactor *= 0.5f;
-		moveVars.jumpFactor *= 0.5f;
 		moveVars.canVault = false;
 
 		bool just_action1 = this.isKeyJustPressed(key_action1);
 
 		//	printf("charge_state " + charge_state );
-		if (hasbullet && charge_state == MusketmanParams::no_bullets)
+		if (hasball && charge_state == HandcannonParams::no_balls)
 		{
 			// (when key_action1 is down) reset charge state when:
 			// * the player has picks up arrows when inventory is empty
 			// * the player switches arrow type while charging bow
-			charge_state = MusketmanParams::not_aiming;
+			charge_state = HandcannonParams::not_aiming;
 			just_action1 = true;
 		}
 
 		if ((just_action1 || this.wasKeyPressed(key_action2) && !pressed_action2) &&
-		        charge_state == MusketmanParams::not_aiming)
+		        charge_state == HandcannonParams::not_aiming)
 		{
-			charge_state = MusketmanParams::readying;
-			hasbullet = hasBullets(this);
+			charge_state = HandcannonParams::igniting;
+			hasball = hasBalls(this);
 
 			if (responsible)
 			{
-				this.set_bool("has_bullet", hasbullet);
-				this.Sync("has_bullet", isServer());
+				this.set_bool("has_ball", hasball);
+				this.Sync("has_ball", isServer());
 			}
 
 			charge_time = 0;
 
-			if (!hasbullet)
+			if (!hasball)
 			{
-				charge_state = MusketmanParams::no_bullets;
+				charge_state = HandcannonParams::no_balls;
 
 				if (ismyplayer && !this.wasKeyPressed(key_action1))   // playing annoying no ammo sound
 				{
@@ -185,9 +416,16 @@ void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVar
 			}
 			else
 			{
-				sprite.PlaySound("musketman_arrow_draw_end.ogg");
+				if (ismyplayer)
+				{
+					if (just_action1)
+					{
+						sprite.PlaySound("SparkleShort.ogg");// fire arrow sound
+					}
+				}
+
 				sprite.RewindEmitSound();
-				sprite.SetEmitSoundPaused(false);
+				sprite.SetEmitSoundPaused(true);
 
 				if (!ismyplayer)   // lower the volume of other players charging  - ooo good idea
 				{
@@ -195,12 +433,11 @@ void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVar
 				}
 			}
 		}
-		else if (charge_state == MusketmanParams::readying)
+		else if (charge_state == HandcannonParams::igniting)
 		{
-
-			if(!hasbullet)
+			if(!hasball)
 			{
-				charge_state = MusketmanParams::no_bullets;
+				charge_state = HandcannonParams::no_balls;
 				charge_time = 0;
 				
 				if (ismyplayer)   // playing annoying no ammo sound
@@ -213,88 +450,31 @@ void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVar
 				charge_time++;
 			}
 
-			if (charge_time >= MusketmanParams::shoot_period)
+			if (charge_time >= HandcannonParams::ignite_period)
 			{
-				//sprite.PlaySound("musketman_charged.ogg");
-				charge_state = MusketmanParams::charging;
-				sprite.SetEmitSoundPaused(true);
+				// ignited, readying to shoot
+
+				sprite.RewindEmitSound();
+				sprite.SetEmitSoundPaused(false);
+				charge_state = HandcannonParams::ignited;
 			}
 		}
-		else if (charge_state == MusketmanParams::charging)
+		else if (charge_state == HandcannonParams::no_balls)
 		{
-			if(!hasbullet)
-			{
-				charge_state = MusketmanParams::no_bullets;
-				charge_time = 0;
-				
-				if (ismyplayer)   // playing annoying no ammo sound
-				{
-					this.getSprite().PlaySound("Entities/Characters/Sounds/NoAmmo.ogg", 0.5);
-				}
-			}
-			else
+			if (charge_time < HandcannonParams::ready_time)
 			{
 				charge_time++;
 			}
-
-			if (charge_time >= MusketmanParams::shoot_period + MusketmanParams::charge_limit)
-			{
-				charge_state = MusketmanParams::discharging;
-				charge_time = MusketmanParams::shoot_period;
-			}
-		}
-		else if (charge_state == MusketmanParams::discharging)
-		{
-			if(!hasbullet)
-			{
-				charge_state = MusketmanParams::no_bullets;
-				charge_time = 0;
-				
-				if (ismyplayer)   // playing annoying no ammo sound
-				{
-					this.getSprite().PlaySound("Entities/Characters/Sounds/NoAmmo.ogg", 0.5);
-				}
-			}
-			else if (charge_time >= 0)
-			{
-				charge_time--;
-				if (charge_time > 0)//twice
-				{
-					charge_time--;
-				}
-				if (charge_time <= 0)
-				{
-					charge_state = MusketmanParams::readying;
-					sprite.RewindEmitSound();
-					sprite.SetEmitSoundPaused(false);
-
-					if (!ismyplayer)   // lower the volume of other players charging  - ooo good idea
-					{
-						sprite.SetEmitSoundVolume(0.5f);
-					}
-				}
-			}
-		}
-		else if (charge_state == MusketmanParams::no_bullets)
-		{
-			if (charge_time < MusketmanParams::ready_time) charge_time++;
-
 		}
 	}
 	else
 	{
-		if (charge_state == MusketmanParams::charging || charge_state == MusketmanParams::discharging)
-		{
-			ClientFire(this, charge_time, charge_state);
-		}
-		charge_state = MusketmanParams::not_aiming;    //set to not aiming either way
+		charge_state = HandcannonParams::not_aiming;
 		charge_time = 0;
-
-		sprite.SetEmitSoundPaused(true);
-		if(pressed_action2)
+		if (pressed_action2 && isBuildTime(this))
 		{
-			charge_state = MusketmanParams::digging;
-			musketman.dig_delay = 25;
+			charge_state = HandcannonParams::digging;
+			handcannon.dig_delay = 25;
 			DoDig(this);
 		}
 	}
@@ -308,16 +488,16 @@ void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVar
 		if (ismyplayer && !getHUD().hasButtons())
 		{
 			int frame = 0;
-			//	print("musketman.charge_time " + musketman.charge_time + " / " + MusketmanParams::shoot_period );
-			if (musketman.charge_state == MusketmanParams::readying || musketman.charge_state == MusketmanParams::discharging)
+			// print("handcannon.charge_time " + handcannon.charge_time + " / " + HandcannonParams::shoot_period );
+			if (handcannon.charge_state == HandcannonParams::igniting)
 			{
-				//charging shot
-				frame = 0 + int((float(musketman.charge_time) / float(MusketmanParams::shoot_period + 1) * 18));
+				//readying shot
+				frame = 0 + int((float(handcannon.charge_time) / float(HandcannonParams::ignite_period + 1)) * 18);
 			}
-			else if (musketman.charge_state == MusketmanParams::charging)
+			else if (handcannon.charge_state == HandcannonParams::firing || handcannon.charge_state == HandcannonParams::ignited)
 			{
 				//charging legolas
-				frame = 18;// + int((float(musketman.charge_time - MusketmanParams::shoot_period) / MusketmanParams::charge_limit) * 9) * 2;
+				frame = 18 + int((float(handcannon.charge_time - HandcannonParams::ignite_period) / float(HandcannonParams::shoot_period)) * 16);
 			}
 			getHUD().SetCursorFrame(frame);
 		}
@@ -330,40 +510,31 @@ void ManageMusket(CBlob@ this, MusketmanInfo@ musketman, RunnerMoveVars@ moveVar
 		}
 	}
 
-	musketman.charge_time = charge_time;
-	musketman.charge_state = charge_state;
-	musketman.has_bullet = hasbullet;
+
+	handcannon.charge_time = charge_time;
+	handcannon.charge_state = charge_state;
+	handcannon.has_ball = hasball;
 
 }
 
 void onTick(CBlob@ this)
 {
-	MusketmanInfo@ musketman;
-	if (!this.get("musketmanInfo", @musketman))
+	HandcannonInfo@ handcannon;
+	if (!this.get("handcannonInfo", @handcannon))
 	{
 		return;
 	}
-
-	// description
-	/*
-	if (u_showtutorial && this.isMyPlayer() && !this.hasTag("spoke description"))
-	{
-		this.maxChatBubbleLines = 255;
-		this.Chat("Make camp and snipe!\n\n[LMB] to shoot, need full charge to shoot\n[RMB] to use shovel\nCan build barricades with barricade frame, buy at archer shop");
-		this.set_u8("emote", Emotes::off);
-		this.set_u32("emotetime", getGameTime() + 300);
-		this.Tag("spoke description");
-	}
-	*/
 
 	if (isKnocked(this) || this.isInInventory())
 	{
-		musketman.charge_state = 0;
-		musketman.charge_time = 0;
-		this.getSprite().SetEmitSoundPaused(true);
+		handcannon.grappling = false;
+		handcannon.charge_state = 0;
+		handcannon.charge_time = 0;
 		getHUD().SetCursorFrame(0);
 		return;
 	}
+
+	ManageGrapple(this, handcannon);
 
 	RunnerMoveVars@ moveVars;
 	if (!this.get("moveVars", @moveVars))
@@ -371,10 +542,97 @@ void onTick(CBlob@ this)
 		return;
 	}
 
-	ManageMusket(this, musketman, moveVars);
+	ManageCannon(this, handcannon, moveVars);
 
-	if(this.isMyPlayer() && this.getCarriedBlob() is null && getBuildMode(this) == MusketmanBuilding::barricade && this.isKeyJustPressed(key_action1))// reload barricade
+	if(this.isMyPlayer() && this.getCarriedBlob() is null && getBuildMode(this) == HandcannonBuilding::barricade && this.isKeyJustPressed(key_action1))// reload barricade
 		this.SendCommand(this.getCommandID("barricade"));
+}
+
+bool checkGrappleBarrier(Vec2f pos)
+{
+	CRules@ rules = getRules();
+	if (!shouldBarrier(@rules)) { return false; }
+
+	Vec2f tl, br;
+	getBarrierRect(@rules, tl, br);
+
+	return (pos.x > tl.x && pos.x < br.x);
+}
+
+bool checkGrappleStep(CBlob@ this, HandcannonInfo@ handcannon, CMap@ map, const f32 dist)
+{
+	if (checkGrappleBarrier(handcannon.grapple_pos)) // red barrier
+	{
+		if (canSend(this) || isServer())
+		{
+			handcannon.grappling = false;
+			SyncGrapple(this);
+		}
+	}
+	else if (grappleHitMap(handcannon, map, dist))
+	{
+		handcannon.grapple_id = 0;
+
+		handcannon.grapple_ratio = Maths::Max(0.2, Maths::Min(handcannon.grapple_ratio, dist / handcannon_grapple_length));
+
+		handcannon.grapple_pos.y = Maths::Max(0.0, handcannon.grapple_pos.y);
+
+		if (canSend(this) || isServer()) SyncGrapple(this);
+
+		return true;
+	}
+	else
+	{
+		CBlob@ b = map.getBlobAtPosition(handcannon.grapple_pos);
+		if (b !is null)
+		{
+			if (b is this)
+			{
+				//can't grapple self if not reeled in
+				if (handcannon.grapple_ratio > 0.5f)
+					return false;
+
+				if (canSend(this) || isServer())
+				{
+					handcannon.grappling = false;
+					SyncGrapple(this);
+				}
+
+				return true;
+			}
+			else if (b.isCollidable() && b.getShape().isStatic() && !b.hasTag("ignore_arrow"))
+			{
+				//TODO: Maybe figure out a way to grapple moving blobs
+				//		without massive desync + forces :)
+
+				handcannon.grapple_ratio = Maths::Max(0.2, Maths::Min(handcannon.grapple_ratio, b.getDistanceTo(this) / handcannon_grapple_length));
+
+				handcannon.grapple_id = b.getNetworkID();
+				if (canSend(this) || isServer())
+				{
+					SyncGrapple(this);
+				}
+
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+bool grappleHitMap(HandcannonInfo@ handcannon, CMap@ map, const f32 dist = 16.0f)
+{
+	return  map.isTileSolid(handcannon.grapple_pos + Vec2f(0, -3)) ||			//fake quad
+	        map.isTileSolid(handcannon.grapple_pos + Vec2f(3, 0)) ||
+	        map.isTileSolid(handcannon.grapple_pos + Vec2f(-3, 0)) ||
+	        map.isTileSolid(handcannon.grapple_pos + Vec2f(0, 3)) ||
+	        (dist > 10.0f && map.getSectorAtPosition(handcannon.grapple_pos, "tree") !is null);   //tree stick
+}
+
+bool shouldReleaseGrapple(CBlob@ this, HandcannonInfo@ handcannon, CMap@ map)
+{
+	return !grappleHitMap(handcannon, map) || this.isKeyPressed(key_use);
 }
 
 void DoDig(CBlob@ this)
@@ -444,7 +702,7 @@ void DoDig(CBlob@ this)
 					bool large = (rayb.hasTag("blocks sword") || (rayb.hasTag("barricade") && rayb.getTeamNum() != this.getTeamNum())// added here
 								 && !rayb.isAttached() && rayb.isCollidable()); // usually doors, but can also be boats/some mechanisms
 
-					f32 temp_damage = 0.5f;
+					f32 temp_damage = 1.0f;
 					
 					if (rayb.getName() == "log")
 					{
@@ -483,7 +741,7 @@ void DoDig(CBlob@ this)
 
 					if (rayb.getTeamNum() != this.getTeamNum() || rayb.hasTag("dead player"))
 					{
-						this.server_Hit(rayb, rayInfos[j].hitpos, velocity, temp_damage, Hitters::shovel, true);
+						this.server_Hit(rayb, rayInfos[j].hitpos, velocity, temp_damage, Hitters::handaxe, true);
 					}
 					
 					if (large)
@@ -500,7 +758,8 @@ void DoDig(CBlob@ this)
 					bool dirt_thick_stone = map.isTileThickStone(hi.tile);
 					bool gold = map.isTileGold(hi.tile);
 					bool wood = map.isTileWood(hi.tile);
-					if (ground || wood || dirt_stone || gold)
+					bool stone = map.isTileCastle(hi.tile);
+					if (ground || wood || dirt_stone || gold || stone)
 					{
 						Vec2f tpos = map.getTileWorldPosition(hi.tileOffset) + Vec2f(4, 4);
 						Vec2f offset = (tpos - blobPos);
@@ -532,7 +791,6 @@ void DoDig(CBlob@ this)
 							if (canhit)
 							{
 								map.server_DestroyTile(hi.hitpos, 0.1f, this);
-								if (ground) map.server_DestroyTile(hi.hitpos, 0.1f, this);
 								if (gold)
 								{
 									// Note: 0.1f damage doesn't harvest anything I guess
@@ -577,72 +835,59 @@ bool canSend(CBlob@ this)
 	return (this.isMyPlayer() || this.getPlayer() is null || this.getPlayer().isBot());
 }
 
-void ClientFire(CBlob@ this, s8 charge_time, u8 charge_state)
+void ClientFire(CBlob@ this)
 {
 	//time to fire!
 	if (canSend(this))  // client-logic
 	{
-		CBitStream params;
-		params.write_s8(charge_time);
-		params.write_u8(charge_state);
 
-		this.SendCommand(this.getCommandID("request shoot"), params);
+		this.SendCommand(this.getCommandID("request shoot"));
 	}
 }
 
-CBlob@ CreateBullet(CBlob@ this, Vec2f bulletPos, Vec2f bulletVel)
+CBlob@ CreateBall(CBlob@ this, Vec2f ballPos, Vec2f ballVel)
 {
-	CBlob@ bullet = server_CreateBlobNoInit("bullet");
-	if (bullet !is null)
+	CBlob@ ball = server_CreateBlobNoInit("handcannonball");
+	if (ball !is null)
 	{
-		bullet.SetDamageOwnerPlayer(this.getPlayer());
-		bullet.Init();
+		ball.SetDamageOwnerPlayer(this.getPlayer());
+		ball.Init();
 
-		bullet.IgnoreCollisionWhileOverlapped(this);
-		bullet.server_setTeamNum(this.getTeamNum());
-		Vec2f bulletOffset = bulletVel;
-		bulletOffset.Normalize();
-		bullet.setPosition(bulletPos + bulletOffset * 4);
-		bullet.setVelocity(bulletVel);
+		ball.IgnoreCollisionWhileOverlapped(this);
+		ball.server_setTeamNum(this.getTeamNum());
+		ball.setPosition(ballPos);
+		ball.setVelocity(ballVel);
 	}
-	return bullet;
+	return ball;
 }
 
-void ShootBullet(CBlob@ this)
+void ShootBall(CBlob@ this)
 {
-	MusketmanInfo@ musketman;
-	if (!this.get("musketmanInfo", @musketman))
+	HandcannonInfo@ handcannon;
+	if (!this.get("handcannonInfo", @handcannon))
 	{
 		return;
 	}
 
-	if (!hasBullets(this)) return; 
+	if (!hasBalls(this)) return; 
 	
-	s8 charge_time = musketman.charge_time;
-	u8 charge_state = musketman.charge_state;
+	s8 charge_time = handcannon.charge_time;
+	u8 charge_state = handcannon.charge_state;
 
-	f32 bulletspeed = MusketmanParams::shoot_max_vel;
+	f32 ballspeed = HandcannonParams::shoot_max_vel;
 
 	Vec2f offset(this.isFacingLeft() ? 2 : -2, -2);
 
-	Vec2f bulletPos = this.getPosition() + offset;
+	Vec2f ballPos = this.getPosition() + offset;
 	Vec2f aimpos = this.getAimPos();
-	Vec2f bulletVel = (aimpos - bulletPos);
-	bulletVel.Normalize();
-	bulletVel *= bulletspeed;
+	Vec2f ballVel = (aimpos - ballPos);
+	ballVel.Normalize();
+	ballVel *= ballspeed;
 
-	f32 randomInn = 0.0f;
-	if(charge_state == MusketmanParams::discharging)
-	{
-		randomInn = -3.0f + (( f32(XORRandom(2048)) / 2048.0f) * 6.0f);
-	}
-
-	bulletVel.RotateBy(randomInn,Vec2f(0,0));
-
-	CreateBullet(this, bulletPos, bulletVel);
+	CreateBall(this, ballPos, ballVel);
 
 	this.SendCommand(this.getCommandID("play fire sound"));
-	this.TakeBlob("mat_bullets", 1);
+	this.TakeBlob("mat_handcannonballs", 1);
 
 }
 
@@ -650,23 +895,46 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 {
 	if (cmd == this.getCommandID("play fire sound") && isClient())
 	{
-		this.getSprite().PlaySound("M16Fire.ogg");
+		this.getSprite().PlaySound("Bomb.ogg");
 	}
 	else if (cmd == this.getCommandID("request shoot") && isServer())
 	{
-		s8 charge_time;
-		if (!params.saferead_u8(charge_time)) { return; }
+		HandcannonInfo@ handcannon;
+		if (!this.get("handcannonInfo", @handcannon)) { return; }
 
-		u8 charge_state;
-		if (!params.saferead_u8(charge_state)) { return; }
+		ShootBall(this);
+	}
+	else if (cmd == this.getCommandID("sync ignite") && isServer())
+	{
+		HandcannonInfo@ handcannon;
+		if (!this.get("handcannonInfo", @handcannon))
+		{
+			return;
+		}
+		if (handcannon.charge_state != HandcannonParams::firing)// sync shoot state
+		{
+			handcannon.charge_state = HandcannonParams::firing;
+			handcannon.charge_time = HandcannonParams::ignite_period;
+			this.set_s32("shoot time", getGameTime() + HandcannonParams::shoot_period);
+			this.getSprite().SetEmitSoundPaused(false);
+		}
 
-		MusketmanInfo@ musketman;
-		if (!this.get("musketmanInfo", @musketman)) { return; }
-
-		musketman.charge_time = charge_time;
-		musketman.charge_state = charge_state;
-
-		ShootBullet(this);
+		this.SendCommand(this.getCommandID("sync ignite client"));
+	}
+	else if (cmd == this.getCommandID("sync ignite client") && isClient())
+	{
+		HandcannonInfo@ handcannon;
+		if (!this.get("handcannonInfo", @handcannon))
+		{
+			return;
+		}
+		if (handcannon.charge_state != HandcannonParams::firing)// sync shoot state
+		{
+			handcannon.charge_state = HandcannonParams::firing;
+			handcannon.charge_time = HandcannonParams::ignite_period;
+			this.set_s32("shoot time", getGameTime() + HandcannonParams::shoot_period);
+			this.getSprite().SetEmitSoundPaused(false);
+		}
 	}
 }
 
@@ -758,18 +1026,20 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 }
 
 // help
+/*
 void onAddToInventory(CBlob@ this, CBlob@ blob)
 {
 	string itemname = blob.getName();
 	if (this.isMyPlayer())
 	{
-		if (itemname == "mat_bullets")
+		if (itemname == "mat_handcannonballs")
 		{
-			SetHelp(this, "help self action", "musketman", getTranslatedString("$Help_Bullet$Fire bullet   $KEY_HOLD$$LMB$"), "", 255);
+			SetHelp(this, "help self action", "handcannon", getTranslatedString("$Help_Ball$Fire ball   $KEY_HOLD$$LMB$"), "", 255);
 		}
 		else if (itemname == "mat_barricades")
 		{
-			SetHelp(this, "help inventory", "musketman", getTranslatedString("$Build$Select in inventory to build barricade"), "", 255);
+			SetHelp(this, "help inventory", "handcannon", getTranslatedString("$Build$Select in inventory to build barricade"), "", 255);
 		}
 	}
 }
+*/

@@ -213,6 +213,10 @@ class KillFeed
 				case Hitters::mattock:			hitterIcon = "$killfeed_mattock$"; break;
 				case Hitters::ram:			    hitterIcon = "$killfeed_ram$"; break;
 				case Hitters::thrownaxe:		hitterIcon = "$killfeed_thrownaxe$"; break;
+				case Hitters::pike_thrust:
+				case Hitters::pike_slash:		hitterIcon = "$killfeed_pike$"; break;
+				case Hitters::handcannon:		hitterIcon = "$killfeed_handcannon$"; break;
+				case Hitters::handaxe:		    hitterIcon = "$killfeed_handaxe$"; break;
 
 				default: 						hitterIcon = "$killfeed_fall$";
 			}
@@ -337,6 +341,9 @@ void onInit(CRules@ this)
 	AddIconToken("$killfeed_mattock$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 18);
 	AddIconToken("$killfeed_ram$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 19);
 	AddIconToken("$killfeed_thrownaxe$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 20);
+	AddIconToken("$killfeed_pike$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 21);
+	AddIconToken("$killfeed_handcannon$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 22);
+	AddIconToken("$killfeed_handaxe$", "GUI/LWBKillfeedIcons.png", Vec2f(32, 16), 23);
 }
 
 void onPlayerDie(CRules@ this, CPlayer@ victim, CPlayer@ killer, u8 customdata)
