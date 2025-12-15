@@ -146,6 +146,14 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 		{
 			addLoot(this, INDEX_DUELIST, 2, 0);
 		}
+		else if (NAME == "pikeman")
+		{
+			addLoot(this, INDEX_PIKEMAN, 2, 0);
+		}
+		else if (NAME == "handcannon")
+		{
+			addLoot(this, INDEX_HANDCANNON, 2, 0);
+		}
 
 		server_CreateLoot(this, this.getPosition(), caller.getTeamNum());
 

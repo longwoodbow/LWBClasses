@@ -69,7 +69,8 @@ void MakeTradeMenu(CBlob@ trader)
 	if(ClassesConfig::firelancer)addItemForCoin(trader, "Fire Lances", DTSConfig::cost_firelances, true, "$mat_firelances$", "mat_firelances", "Chinese boomsticks for Fire Lancer.");
 	if(ClassesConfig::firelancer)addItemForCoin(trader, "Flame Thrower", DTSConfig::cost_flamethrowers, true, "$mat_flamethrowers$", "mat_flamethrowers", "Fire Lance shaped flame thrower for Fire Lancer.");
 	//advanced stuff
-	if(ClassesConfig::handcannon)addItemForCoin(trader, "Handcannon", DTSConfig::cost_handcannon, true, "$item_handcannon$", "item_handcannon", "Become handcannon, the advanced ranged class.");
+	if(ClassesConfig::handcannon)addItemForCoin(trader, "Poleaxe Pike", DTSConfig::cost_handcannon, true, "$item_pike$", "item_pike", "Use this to become pikeman, the advanced melee class.");
+	if(ClassesConfig::handcannon)addItemForCoin(trader, "Handcannon", DTSConfig::cost_handcannon, true, "$item_handcannon$", "item_handcannon", "Use this to become handcannon, the advanced ranged class.");
 	if(ClassesConfig::handcannon)addItemForCoin(trader, "Handcannon Balls", DTSConfig::cost_handcannonballs, true, "$mat_handcannonballs$", "mat_handcannonballs", "Balls for handcannon.");
 	//utility stuff
 	if(ClassesConfig::rockthrower)addItemForCoin(trader, "Wood", DTSConfig::cost_wood, true, "$mat_wood$", "mat_wood", Descriptions::wood);

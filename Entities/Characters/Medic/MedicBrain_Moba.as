@@ -3,6 +3,7 @@
 #define SERVER_ONLY
 
 #include "BrainCommon.as"
+#include "BrainCommon_Moba.as"
 
 
 void onInit(CBrain@ this)

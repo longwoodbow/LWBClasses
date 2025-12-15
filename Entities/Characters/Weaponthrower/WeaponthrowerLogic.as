@@ -1199,7 +1199,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 			vel.Normalize();
 
 			//printf("nor " + vel * normal );
-			if (vel * normal < 0.0f && this.hasTag("ShieldBash")) //only bash one thing per tick, knight uses limited actors system
+			if (vel * normal < 0.0f && !this.hasTag("ShieldBash")) //only bash one thing per tick, knight uses limited actors system
 			{
 				ShieldVars@ shieldVars = getShieldVars(this);
 				//printf("shi " + shieldVars.direction * normal );

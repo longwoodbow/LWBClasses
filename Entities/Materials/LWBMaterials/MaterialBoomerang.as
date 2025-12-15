@@ -7,7 +7,7 @@ void onInit(CBlob@ this)
     this.set_u16('decay time', 45);
   }
 
-  this.maxQuantity = 15;
+  this.maxQuantity = 30;
 
   this.getCurrentScript().runFlags |= Script::remove_after_this;
 

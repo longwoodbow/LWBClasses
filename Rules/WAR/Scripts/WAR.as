@@ -162,6 +162,13 @@ shared class WarSpawns : RespawnSystem
 				p_info.team = 0;
 			}
 
+			// reset class if die as advanced class
+			string className = p_info.blob_name;
+			if (className == "pikeman" || className == "handcannon")
+			{
+				p_info.blob_name = randomClass(true);
+			}
+
 			CBlob@ spawnBlob;
 			CBlob@ playerBlob;
 			{

@@ -156,7 +156,7 @@ void RunStateMachine(CBlob@ this, SpearmanInfo@ spearman, RunnerMoveVars@ moveVa
 				u8 net_state = states[serverStateIndex].getStateValue();
 				if (this.isMyPlayer())
 				{
-					if (net_state >= SpearmanStates::spear_cut_mid && net_state <= SpearmanStates::spear_power_super)
+					if (net_state >= SpearmanStates::spear_cut_mid && net_state <= SpearmanStates::spear_throw_super)
 					{
 						if ((getGameTime() - serverState.stateEnteredTime) > 20)
 						{

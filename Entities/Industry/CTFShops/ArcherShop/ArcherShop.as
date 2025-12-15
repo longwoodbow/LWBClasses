@@ -26,7 +26,7 @@ void onInit(CBlob@ this)
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f_zero);
-	this.set_Vec2f("shop menu size", Vec2f(4, 4));
+	this.set_Vec2f("shop menu size", Vec2f(5, 4));
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
@@ -92,6 +92,17 @@ void onInit(CBlob@ this)
 		{
 			ShopItem@ s = addShopItem(this, "Flame Throwers", "$mat_flamethrowers$", "mat_flamethrowers", "Fire Lance shaped flame thrower for Fire Lancer.", true);
 			AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::flamethrowers);
+		}
+	}
+	if(ClassesConfig::handcannon)
+	{
+		{
+			ShopItem@ s = addShopItem(this, "Handcannon", "$item_handcannon$", "item_handcannon", "Use this to become handcannon, the advanced ranged class.", true);
+			AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::handcannon);
+		}
+		{
+			ShopItem@ s = addShopItem(this, "Handcannon Balls", "$mat_handcannonballs$", "mat_handcannonballs", "Balls for handcannon.", true);
+			AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::handcannonballs);
 		}
 	}
 }

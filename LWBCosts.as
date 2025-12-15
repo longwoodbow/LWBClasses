@@ -5,7 +5,7 @@ namespace LWB_CTFCosts
 	s32 firespears          = 40;
 	s32 poisonspears        = 25;
 	s32 smokeball           = 30;
-	s32 pike                = 30;
+	s32 pike                = 250;
 
 	//ArcherShop.as
 	s32 poisonarrows        = 25;
@@ -15,7 +15,7 @@ namespace LWB_CTFCosts
 	s32 chakrams            = 20;
 	s32 firelances          = 15;
 	s32 flamethrowers       = 30;
-	s32 handcannon          = 300;
+	s32 handcannon          = 250;
 	s32 handcannonballs     = 15;
 
 	//BuilderShop.as

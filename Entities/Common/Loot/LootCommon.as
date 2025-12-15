@@ -41,7 +41,8 @@ enum                Index
 	MAT_BOOMERANGS,
 	MAT_CHAKRAMS,
 	MAT_FIRELANCES,
-	MAT_FRAMETHROWERS
+	MAT_FRAMETHROWERS,
+	MAT_HANDCANNONBALLS
 };
 
 const string[]      NAME =
@@ -76,7 +77,8 @@ const string[]      NAME =
 	"mat_boomerangs",
 	"mat_chakrams",
 	"mat_firelances",
-	"mat_flamethrowers"
+	"mat_flamethrowers",
+	"mat_handcannonballs"
 };
 
 const u8[]          WEIGHT =
@@ -111,7 +113,8 @@ const u8[]          WEIGHT =
 	5,                      // mat_boomerangs
 	95,                     // mat_chakrams
 	5,                      // mat_firelances
-	95                      // mat_flamethrowers
+	95,                     // mat_flamethrowers
+	75                     // mat_handcannonballs
 };
 
 // pre-set 'CLASS' arrays
@@ -236,6 +239,20 @@ const u8[]          INDEX_DUELIST =
 	FOOD//no special items
 };
 
+const u8[]          INDEX_PIKEMAN =
+{
+	HEART,
+	FOOD//no special items
+};
+
+const u8[]          INDEX_HANDCANNON =
+{
+	MAT_HANDCANNONBALLS,
+	MAT_BARRICADES
+};
+
+
+
 // pre-set 'GAMEMODE' arrays
 // changed to string, make arrays for get only actived classes' items
 // ━━━━━━━━━━━━━━━━━
@@ -298,7 +315,7 @@ void addLoot(CBlob@ this, const u8[]&in INDEX, u8 &in count, const u8 &in NONE)
 // added this for gamemode loots
 void addLoot(CBlob@ this, string gamemodeString, u8 &in count, const u8 &in NONE)
 {
-	bool allowBuilder = gamemodeString == INDEX_CTF;
+	bool allowBuilder = gamemodeString == INDEX_CTF || ClassesConfig::forceAllowBuilder;
 	bool builder = ClassesConfig::builder && allowBuilder;
 	bool rockthrower = ClassesConfig::rockthrower;
 	bool medic = ClassesConfig::medic;
@@ -317,6 +334,8 @@ void addLoot(CBlob@ this, string gamemodeString, u8 &in count, const u8 &in NONE
 	bool weaponthrower = ClassesConfig::weaponthrower;
 	bool firelancer = ClassesConfig::firelancer;
 	bool gunner = ClassesConfig::gunner;
+	bool pikeman = ClassesConfig::pikeman;
+	bool handcannon = ClassesConfig::handcannon;
 
 	u8[] loot = {HEART,FOOD};
 	if (archer || crossbowman) loot.push_back(MAT_ARROWS);
@@ -348,6 +367,7 @@ void addLoot(CBlob@ this, string gamemodeString, u8 &in count, const u8 &in NONE
 	if (weaponthrower) loot.push_back(MAT_CHAKRAMS);
 	if (firelancer) loot.push_back(MAT_FIRELANCES);
 	if (firelancer) loot.push_back(MAT_FRAMETHROWERS);
+	if (handcannon) loot.push_back(MAT_HANDCANNONBALLS);
 
 	addLoot(this, loot, count, NONE);
 }

@@ -137,6 +137,13 @@ shared class TDMSpawns : RespawnSystem
 				player.server_setTeamNum(p_info.team);
 			}
 
+			// reset class if die as advanced class
+			string className = p_info.blob_name;
+			if (className == "pikeman" || className == "handcannon")
+			{
+				p_info.blob_name = randomClass(true);
+			}
+
 			// remove previous players blob
 			if (player.getBlob() !is null)
 			{

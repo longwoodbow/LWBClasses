@@ -89,7 +89,7 @@ int getHeadFrame(CBlob@ blob, int headIndex, bool default_pack)
 		}
 		else if (config == "musketman")
 		{
-			headIndex = NUM_UNIQUEHEADS + 8;
+			headIndex = NUM_UNIQUEHEADS + 13;
 		}
 		else if (config == "chopper")
 		{
@@ -113,7 +113,7 @@ int getHeadFrame(CBlob@ blob, int headIndex, bool default_pack)
 		}
 		else if (config == "gunner")
 		{
-			headIndex = NUM_UNIQUEHEADS + 60;
+			headIndex = NUM_UNIQUEHEADS + 12;
 		}
 		else if (config == "warcrafter")
 		{
@@ -126,6 +126,14 @@ int getHeadFrame(CBlob@ blob, int headIndex, bool default_pack)
 		else if (config == "demolitionist")
 		{
 			headIndex = NUM_UNIQUEHEADS + 39;
+		}
+		else if (config == "pikeman")
+		{
+			headIndex = NUM_UNIQUEHEADS + 33;
+		}
+		else if (config == "handcannon")
+		{
+			headIndex = NUM_UNIQUEHEADS + 60;
 		}
 		else if (config == "migrant")
 		{

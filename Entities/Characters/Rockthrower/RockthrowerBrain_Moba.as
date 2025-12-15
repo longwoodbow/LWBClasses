@@ -4,6 +4,7 @@
 
 #include "BrainCommon.as"
 #include "RockthrowerCommon.as";
+#include "BrainCommon_Moba.as"
 
 void onInit(CBrain@ this)
 {
@@ -12,7 +13,7 @@ void onInit(CBrain@ this)
 
 void onTick(CBrain@ this)
 {
-	SearchTarget(this, false, true);
+	SearchTarget_Moba(this, false, true);
 
 	CBlob @blob = this.getBlob();
 	CBlob @target = this.getTarget();

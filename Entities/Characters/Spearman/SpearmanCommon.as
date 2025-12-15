@@ -267,8 +267,8 @@ u8 getSpearType(CBlob@ this)
 
 const int DELTA_BEGIN_ATTACK = 2;
 const int DELTA_END_ATTACK = 5;
-const f32 DEFAULT_ATTACK_DISTANCE = 18.0f;// from 16.0f
-const f32 MAX_ATTACK_DISTANCE = 20.0f;// from 18.0f
+const f32 DEFAULT_ATTACK_DISTANCE = 20.0f;//from 16
+const f32 MAX_ATTACK_DISTANCE = 24.0f;//from 18
 
 const int FLETCH_COOLDOWN = 45;
 const int PICKUP_COOLDOWN = 15;

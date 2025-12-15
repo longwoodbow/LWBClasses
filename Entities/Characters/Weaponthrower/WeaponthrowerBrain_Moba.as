@@ -4,6 +4,7 @@
 
 #include "BrainCommon.as"
 #include "WeaponthrowerCommon.as"
+#include "BrainCommon_Moba.as"
 
 void onInit(CBrain@ this)
 {
@@ -12,14 +13,14 @@ void onInit(CBrain@ this)
 
 void onTick(CBrain@ this)
 {
-	SearchTarget(this, false, true);
+	SearchTarget_Moba(this, false, true);
 
 	CBlob @blob = this.getBlob();
 	CBlob @target = this.getTarget();
 
 	// logic for target
 
-	this.getCurrentScript().tickFrequency = 29;
+	this.getCurrentScript().tickFrequency = 1;
 	if (target !is null)
 	{
 		this.getCurrentScript().tickFrequency = 1;
@@ -50,14 +51,21 @@ void onTick(CBrain@ this)
 
 		if (LoseTarget(this, target))
 		{
-			strategy = Strategy::idle;
+			if(blob.getTeamNum() == 0)
+			goRight(blob);
+			else 
+			goLeft(blob);
 		}
 
 		blob.set_u8("strategy", strategy);
 	}
-	else
+	if (target is null)
 	{
-		RandomTurn(blob);
+		if(blob.getTeamNum() == 0)
+			goRight(blob);
+		else 
+			goLeft(blob);
+		
 	}
 
 	FloatInWater(blob);

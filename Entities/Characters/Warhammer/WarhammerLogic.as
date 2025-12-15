@@ -965,7 +965,7 @@ class CutState : WarhammerState
 				attackarc *= 0.9f;
 			}
 
-			DoAttack(this, 1.5f, attackAngle, attackarc, Hitters::warhammer, delta, warhammer);
+			DoAttack(this, 1.0f, attackAngle, attackarc, Hitters::warhammer, delta, warhammer);
 		}
 		else if (delta >= 17)
 		{
@@ -1022,7 +1022,7 @@ class SlashState : WarhammerState
 		AttackMovement(this, warhammer, moveVars);
 		s32 delta = getHammerTimerDelta(warhammer);
 
-		if (delta == 2)
+		if (delta == 3)
 		{
 			Sound::Play("/ArgLong", this.getPosition());
 			Sound::Play("/SwordSlash", this.getPosition());
@@ -1046,7 +1046,7 @@ class SlashState : WarhammerState
 			if (Maths::Abs(vel.x) < WarhammerVars::slash_move_max_speed &&
 					vel.y > -WarhammerVars::slash_move_max_speed)
 			{
-				Vec2f slash_vel =  warhammer.slash_direction * this.getMass();// * 0.5f
+				Vec2f slash_vel =  warhammer.slash_direction * this.getMass() * 0.75f;// from 0.5f
 				this.AddForce(slash_vel);
 			}
 		}
@@ -1151,7 +1151,7 @@ void HammerCursorUpdate(CBlob@ this, WarhammerInfo@ warhammer)
 
 bool isJab(f32 damage)
 {
-	return damage < 2.0f;
+	return damage < 1.5f;
 }
 
 void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, int deltaInt, WarhammerInfo@ info)

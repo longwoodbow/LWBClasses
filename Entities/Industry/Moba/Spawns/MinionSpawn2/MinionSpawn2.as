@@ -1,4 +1,4 @@
-﻿// Knight Workshop
+// Knight Workshop
 
 #include "Requirements.as"
 #include "ShopCommon.as";

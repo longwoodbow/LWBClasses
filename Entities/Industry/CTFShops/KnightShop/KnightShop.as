@@ -27,7 +27,7 @@ void onInit(CBlob@ this)
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f_zero);
-	this.set_Vec2f("shop menu size", Vec2f(4, 3));
+	this.set_Vec2f("shop menu size", Vec2f(4, 4));
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
@@ -84,6 +84,11 @@ void onInit(CBlob@ this)
 	{
 		ShopItem@ s = addShopItem(this, "Smoke Ball", "$mat_smokeball$", "mat_smokeball", "Smoke Ball for Assassin. Can stun nearly enemies.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::smokeball);
+	}
+	if(ClassesConfig::pikeman)
+	{
+		ShopItem@ s = addShopItem(this, "Poleaxe Pike", "$item_pike$", "item_pike", "Use this to become pikeman, the advanced melee class.", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::pike);
 	}
 }
 

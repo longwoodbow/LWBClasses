@@ -3,6 +3,7 @@
 #define SERVER_ONLY
 
 #include "BrainCommon.as"
+#include "BrainCommon_Moba.as"
 
 
 void onInit(CBrain@ this)
@@ -12,7 +13,7 @@ void onInit(CBrain@ this)
 
 void onTick(CBrain@ this)
 {
-	SearchTarget(this, false, true);
+	SearchTarget_Moba(this, false, true);
 
 	CBlob @blob = this.getBlob();
 	CBlob @target = this.getTarget();
@@ -82,7 +83,7 @@ void UpdateBlob(CBlob@ blob, CBlob@ target, const u8 strategy)
 	Vec2f myPos = blob.getPosition();
 	if (strategy == Strategy::chasing)
 	{
-		DefaultChaseBlob(blob, target);
+		DefaultChaseBlob_Moba(blob, target);
 	}
 	else if (strategy == Strategy::attacking)
 	{
@@ -152,7 +153,6 @@ void AttackBlob(CBlob@ blob, CBlob @target)
 	if (shieldTime)   // hold shield for a while
 	{
 		blob.setKeyPressed(key_action2, true);
-		blob.setKeyPressed(key_up, true);
 	}
 	
 	else if (targetDistance < 40.0f && getGameTime() - blob.get_u32("attack time") < (Maths::Min(13, difficulty + 3))) // release and attack when appropriate
