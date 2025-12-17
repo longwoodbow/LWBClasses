@@ -80,17 +80,15 @@ void onInit(CBlob@ this)
 	this.Tag("player");
 	this.Tag("flesh");
 
-	//centered on arrows
-	//this.set_Vec2f("inventory offset", Vec2f(0.0f, 122.0f));
 	//centered on items
 	this.set_Vec2f("inventory offset", Vec2f(0.0f, 0.0f));
 
-	AddIconToken("$Pike$", "LWBHelpIcons.png", Vec2f(16, 16), 15);
-/*
-	SetHelp(this, "help self action", "pikeman", getTranslatedString("$Pike$Pike        $LMB$"), "", 255);
-	SetHelp(this, "help self hide", "pikeman", getTranslatedString("Hide    $KEY_S$"), "", 255);
-	SetHelp(this, "help self action2", "pikeman", getTranslatedString("$Grapple$ Grappling hook    $RMB$"), "", 255);
-*/
+	AddIconToken("$PikeThrust$", "LWBHelpIcons.png", Vec2f(16, 16), 24);
+	AddIconToken("$PikeSlash$", "LWBHelpIcons.png", Vec2f(16, 16), 25);
+
+	SetHelp(this, "help self action", "pikeman", getTranslatedString("$PikeThrust$Thrust(Effective against players)$LMB$"), "", 4);
+	SetHelp(this, "help self action2", "pikeman", getTranslatedString("$PikeSlash$Slash(Effective against blocks)$RMB$"), "", 4);
+
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
 }
@@ -221,16 +219,14 @@ void onTick(CBlob@ this)
 		}
 
 		// help
-		/*
 		if (this.isKeyJustPressed(key_action1) && getGameTime() > 150)
 		{
-			SetHelp(this, "help self action", "pikeman", getTranslatedString("$Help_PikePower$ Slash!    $KEY_HOLD$$LMB$"), "", 255);
+			SetHelp(this, "help self action", "pikeman", getTranslatedString("$PikeThrust$ Thrust!    $KEY_HOLD$$LMB$"), "", 255);
 		}
 		else if (this.isKeyJustPressed(key_action2) && getGameTime() > 150)
 		{
-			SetHelp(this, "help self action", "pikeman", getTranslatedString("$Help_PikeThrow$ Throw!    $KEY_HOLD$$RMB$"), "", 255);
+			SetHelp(this, "help self action2", "pikeman", getTranslatedString("$PikeSlash$ Slash!    $KEY_HOLD$$RMB$"), "", 255);
 		}
-		*/
 	}
 
 	bool knocked = isKnocked(this);
@@ -671,7 +667,7 @@ class SlashState : PikemanState
 		Vec2f vel = this.getVelocity();
 		if ((pikeman.state == PikemanStates::pike_thrust ||
 				pikeman.state == PikemanStates::pike_thrust_super ||
-				pikeman.state == PikemanStates;;pike_slash) &&
+				pikeman.state == PikemanStates::pike_slash) &&
 				delta < PikemanVars::slash_move_time)
 		{
 
@@ -856,7 +852,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 						continue;
 					}
 
-					f32 temp_damage = b.hasTag("flesh") ? damage : damage / 2;
+					f32 temp_damage = damage;
 					
 					if (rayb.getName() == "log")
 					{

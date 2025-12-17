@@ -20,15 +20,15 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 	{
 		u32 lances_count = this.getBlobCount("mat_firelances");
 		u32 blob_quantity = blob.getQuantity();
-		if (lances_count + blob_quantity <= 10)
+		if (lances_count + blob_quantity <= 20)
 		{
 			this.server_PutInInventory(blob);
 		}
-		else if (lances_count < 10) //merge into current lance stacks
+		else if (lances_count < 20) //merge into current lance stacks
 		{
 			this.getSprite().PlaySound("/PutInInventory.ogg");
 
-			u32 pickup_amount = Maths::Min(blob_quantity, 10 - lances_count);
+			u32 pickup_amount = Maths::Min(blob_quantity, 20 - lances_count);
 			if (blob_quantity - pickup_amount > 0)
 				blob.server_SetQuantity(blob_quantity - pickup_amount);
 			else

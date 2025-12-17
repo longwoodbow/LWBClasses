@@ -1025,8 +1025,6 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 	}
 }
 
-// help
-/*
 void onAddToInventory(CBlob@ this, CBlob@ blob)
 {
 	string itemname = blob.getName();
@@ -1034,12 +1032,11 @@ void onAddToInventory(CBlob@ this, CBlob@ blob)
 	{
 		if (itemname == "mat_handcannonballs")
 		{
-			SetHelp(this, "help self action", "handcannon", getTranslatedString("$Help_Ball$Fire ball   $KEY_HOLD$$LMB$"), "", 255);
+			SetHelp(this, "help self action", "handcannon", "$handcannonball$Fire ball   $KEY_HOLD$$LMB$", "", 255);
 		}
 		else if (itemname == "mat_barricades")
 		{
-			SetHelp(this, "help inventory", "handcannon", getTranslatedString("$Build$Select in inventory to build barricade"), "", 255);
+			SetHelp(this, "help inventory", "handcannon", "$Build$Select in inventory to build barricade", "", 255);
 		}
 	}
 }
-*/

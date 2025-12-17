@@ -50,5 +50,5 @@ void onRender(CSprite@ this)
 	if (type > 0) type++;
 
 	// class weapon icon
-	GUI::DrawIcon(iconsFilename, type, Vec2f(16, 32), tl + Vec2f(8 + (slotsSize - 1) * 40, -16), 1.0f);
+	GUI::DrawIcon(iconsFilename, type, Vec2f(16, 32), tl + Vec2f(8 + (slotsSize - 1) * 40, -16), 1.0f, blob.getTeamNum());
 }

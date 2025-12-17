@@ -97,7 +97,7 @@ void onInit(CBlob@ this)
 	if(ClassesConfig::handcannon)
 	{
 		{
-			ShopItem@ s = addShopItem(this, "Handcannon", "$item_handcannon$", "item_handcannon", "Use this to become handcannon, the advanced ranged class.", true);
+			ShopItem@ s = addShopItem(this, "Handcannon", "$item_handcannon$", "item_handcannon", "Use this to become handcannon, the advanced ranged class.", false);
 			AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::handcannon);
 		}
 		{

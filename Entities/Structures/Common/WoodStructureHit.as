@@ -27,7 +27,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::flail:
 		case Hitters::chakram:
 		case Hitters::pike_slash:
-			dmg *= 0.5f;
+			dmg *= 1.0f;
 			break;
 
 		case Hitters::sword:

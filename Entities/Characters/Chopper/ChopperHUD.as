@@ -43,7 +43,13 @@ void ManageCursors(CBlob@ this, bool isMattock)
 void onRender(CSprite@ this)
 {
 	CBlob@ blob = this.getBlob();
-
+	ChopperInfo@ chopper;
+	if (!blob.get("chopperInfo", @chopper))
+	{
+		return;
+	}
+	ManageCursors(blob, blob.get_u8("tool_type") == ToolType::mattock);
+	
 	if (g_videorecording)
 		return;
 
@@ -61,12 +67,6 @@ void onRender(CSprite@ this)
 
 	// draw class icon
 
-	ChopperInfo@ chopper;
-	if (!blob.get("chopperInfo", @chopper))
-	{
-		return;
-	}
-	ManageCursors(blob, blob.get_u8("tool_type") == ToolType::mattock);
 	GUI::DrawIcon(iconsFilename, blob.get_u8("tool_type"), Vec2f(16, 32), tl + Vec2f(8 + (slotsSize - 1) * 40, -13), 1.0f);
 
 	// draw resupply icon

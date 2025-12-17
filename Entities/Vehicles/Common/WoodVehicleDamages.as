@@ -12,6 +12,9 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::hammer:
 		case Hitters::mattock:
 		case Hitters::ram:
+		case Hitters::axe:
+		case Hitters::pike_slash:
+		case Hitters::handaxe:
 			dmg *= 2.0f;
 			break;
 
@@ -64,7 +67,6 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			dmg *= 2.0f;
 			break;
 
-		case Hitters::axe:
 		case Hitters::thrownrock:
 		case Hitters::bullet:
 		case Hitters::shovel:
@@ -72,8 +74,6 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::flail:
 		case Hitters::chakram:
 		case Hitters::firelance:
-		case Hitters::pike_slash:
-		case Hitters::handaxe:
 			dmg *= 1.0f;
 			break;
 

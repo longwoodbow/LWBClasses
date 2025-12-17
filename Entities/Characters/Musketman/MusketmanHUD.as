@@ -1,7 +1,7 @@
 //musketman HUD
 
-#include "ActorHUDStartPos.as";
 #include "MusketmanCommon.as";
+#include "ActorHUDStartPos.as";
 
 const string iconsFilename = "Entities/Characters/Musketman/MusketmanIcons.png";
 const int slotsSize = 6;
@@ -50,5 +50,5 @@ void onRender(CSprite@ this)
 	if (type > 0) type++;
 
 	// class weapon icon
-	GUI::DrawIcon(iconsFilename, type, Vec2f(16, 32), tl + Vec2f(8 + (slotsSize - 1) * 40, -16), 1.0f);
+	GUI::DrawIcon(iconsFilename, type, Vec2f(16, 32), tl + Vec2f(8 + (slotsSize - 1) * 40, -16), 1.0f, blob.getTeamNum());
 }

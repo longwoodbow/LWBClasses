@@ -15,6 +15,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::mattock:
 		case Hitters::acid:
 		case Hitters::ram:
+		case Hitters::handaxe:
 			dmg *= 2.0f; //builder is great at smashing stuff
 			break;
 

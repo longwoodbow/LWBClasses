@@ -373,8 +373,8 @@ void onTick(CBlob@ this)
 
 	ManageMusket(this, musketman, moveVars);
 
-	//if(this.isMyPlayer() && this.getCarriedBlob() is null && getBuildMode(this) == MusketmanBuilding::barricade && this.isKeyJustPressed(key_action1))// reload barricade
-		//this.SendCommand(this.getCommandID("barricade"));
+	if(this.isMyPlayer() && this.getCarriedBlob() is null && getBuildMode(this) == MusketmanBuilding::barricade && this.isKeyJustPressed(key_action1))// reload barricade
+		this.SendCommand(this.getCommandID("barricade"));
 }
 
 void DoDig(CBlob@ this)

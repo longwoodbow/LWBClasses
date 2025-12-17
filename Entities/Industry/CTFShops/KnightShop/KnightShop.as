@@ -87,7 +87,7 @@ void onInit(CBlob@ this)
 	}
 	if(ClassesConfig::pikeman)
 	{
-		ShopItem@ s = addShopItem(this, "Poleaxe Pike", "$item_pike$", "item_pike", "Use this to become pikeman, the advanced melee class.", true);
+		ShopItem@ s = addShopItem(this, "Poleaxe Pike", "$item_pike$", "item_pike", "Use this to become pikeman, the advanced melee class.", false);
 		AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::pike);
 	}
 }

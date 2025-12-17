@@ -1,4 +1,4 @@
-//builder HUD
+//butcher HUD
 
 #include "/Entities/Common/GUI/ActorHUDStartPos.as";
 

@@ -1,4 +1,5 @@
 //weaponthrower HUD
+
 #include "WeaponthrowerCommon.as";
 #include "/Entities/Common/GUI/ActorHUDStartPos.as";
 
@@ -14,14 +15,17 @@ void onInit(CSprite@ this)
 
 void ManageCursors(CBlob@ this)
 {
+	// set cursor
 	if (getHUD().hasButtons())
 	{
 		getHUD().SetDefaultCursor();
 	}
 	else
 	{
+		// set cursor
 		getHUD().SetCursorImage("Entities/Characters/Archer/ArcherCursor.png", Vec2f(32, 32));
 		getHUD().SetCursorOffset(Vec2f(-16, -16) * cl_mouse_scale);
+		// frame set in logic
 	}
 }
 
@@ -47,10 +51,10 @@ void onRender(CSprite@ this)
 
 	// draw class icon
 
-	WeaponthrowerInfo@ wter;
-	if (!this.getBlob().get("weaponthrowerInfo", @wter))
+	WeaponthrowerInfo@ weaponthrower;
+	if (!this.getBlob().get("weaponthrowerInfo", @weaponthrower))
 	{
 		return;
 	}
-	GUI::DrawIcon(iconsFilename, wter.weapon_type, Vec2f(16, 32), tl + Vec2f(8 + (slotsSize - 1) * 40, -16), 1.0f);
+	GUI::DrawIcon(iconsFilename, weaponthrower.weapon_type, Vec2f(16, 32), tl + Vec2f(8 + (slotsSize - 1) * 40, -16), 1.0f);
 }

@@ -1,4 +1,4 @@
-//knight HUD
+//medic HUD
 #include "/Entities/Common/GUI/ActorHUDStartPos.as";
 
 const string iconsFilename = "Entities/Characters/Medic/MedicIcons.png";
@@ -41,7 +41,7 @@ void onDie(CBlob@ this)//clear icon
 			list[i].getSprite().RemoveSpriteLayer("need_medic");
 		}
 	}
-	if(getBlobsByTag("dead", @list))
+	if(getBlobsByTag("dead", @list)) // I think don't need
 	{
 		for(uint i = 0; i < list.length(); i++)
 		{
@@ -65,9 +65,10 @@ void onRender(CSprite@ this)
 		{
 			for(uint i = 0; i < list.length(); i++)
 			{
-				CSprite@ sprite = list[i].getSprite();
+				CBlob@ allyBlob = list[i];
+				CSprite@ sprite = allyBlob.getSprite();
 				CSpriteLayer@ icon = sprite.getSpriteLayer("need_medic");
-				if(!list[i].isMyPlayer() && !list[i].hasTag("dead") && list[i].getTeamNum() == blob.getTeamNum() && list[i].getHealth() < list[i].getInitialHealth())
+				if(!allyBlob.isMyPlayer() && !allyBlob.hasTag("dead") && allyBlob.getTeamNum() == blob.getTeamNum() && allyBlob.getHealth() < allyBlob.getInitialHealth())
 				{
 					if (icon is null)
 					{
@@ -99,7 +100,7 @@ void onRender(CSprite@ this)
 		{
 			for(uint i = 0; i < list.length(); i++)
 			{
-				if (list[i].hasTag("dead")) list[i].getSprite().RemoveSpriteLayer("need_medic");
+				list[i].getSprite().RemoveSpriteLayer("need_medic");
 			}
 		}
 	}

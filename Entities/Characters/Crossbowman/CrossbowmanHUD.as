@@ -1,4 +1,4 @@
-//archer HUD
+//crossbowman HUD
 
 #include "CrossbowmanCommon.as";
 #include "ActorHUDStartPos.as";
