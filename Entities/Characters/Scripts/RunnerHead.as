@@ -113,7 +113,7 @@ int getHeadFrame(CBlob@ blob, int headIndex, bool default_pack)
 		}
 		else if (config == "gunner")
 		{
-			headIndex = NUM_UNIQUEHEADS + 12;
+			headIndex = NUM_UNIQUEHEADS + 8;
 		}
 		else if (config == "warcrafter")
 		{

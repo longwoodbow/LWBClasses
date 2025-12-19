@@ -97,7 +97,7 @@ void onRender(CRules@ this)
 							player_frame = 5;
 							newClass = true;
 						}
-						else if(player_char == "n")//demolitionist
+						else if(player_char == "n")//demolitionist and more
 						{
 							player_frame = 6;
 							newClass = true;
@@ -130,6 +130,16 @@ void onRender(CRules@ this)
 						else if(player_char == "b")//butcher
 						{
 							player_frame = 12;
+							newClass = true;
+						}
+						else if(player_char == "e")//pikeman
+						{
+							player_frame = 13;
+							newClass = true;
+						}
+						else if(player_char == "o")//handcannon
+						{
+							player_frame = 14;
 							newClass = true;
 						}
 

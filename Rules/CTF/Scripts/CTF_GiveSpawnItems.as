@@ -10,13 +10,17 @@ bool SetMaterials(CBlob@ blob,  const string &in name, const int quantity, bool 
 	CInventory@ inv = blob.getInventory();
 
 	//avoid over-stacking arrows
-	//changed, disallowed this on my mod
-	/*
-	if (name == "mat_arrows")
+	//changed here
+	if (name == "mat_arrows" ||
+		name == "mat_medkits" ||
+		name == "mat_spears" ||
+		name == "mat_bullets" ||
+		name == "mat_boomerangs" ||
+		name == "mat_firelances" ||
+		name == "mat_handcannonballs")
 	{
 		inv.server_RemoveItems(name, quantity);
 	}
-	*/
 
 	CBlob@ mat = server_CreateBlobNoInit(name);
 
@@ -95,17 +99,16 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 		}
 	} 
 
-	if (name == "archer" || name == "crossbowman") // changed and added from here
+	if (name == "archer" || name == "crossbowman")
 	{
 		if (gametime > getCTFTimer(this, p, "archer")) 
 		{
-			/* disabled this in this mod
 			CInventory@ inv = b.getInventory();
 			if (inv.isInInventory("mat_arrows", 30)) 
 			{
 				return; // don't give arrows if they have 30 already
 			}
-			else */if (SetMaterials(b, "mat_arrows", 30)) 
+			else if (SetMaterials(b, "mat_arrows", 30)) 
 			{
 				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "archer");
 			}
@@ -115,7 +118,12 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	{
 		if (gametime > getCTFTimer(this, p, "medic")) 
 		{
-			if (SetMaterials(b, "mat_medkits", 10)) 
+			CInventory@ inv = b.getInventory();
+			if (inv.isInInventory("mat_medkits", 10)) 
+			{
+				return; // don't give arrows if they have 30 already
+			}
+			else if (SetMaterials(b, "mat_medkits", 10)) 
 			{
 				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "medic");
 			}
@@ -125,7 +133,12 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	{
 		if (gametime > getCTFTimer(this, p, "spearman")) 
 		{
-			if (SetMaterials(b, "mat_spears", 10)) 
+			CInventory@ inv = b.getInventory();
+			if (inv.isInInventory("mat_spears", 10)) 
+			{
+				return; // don't give arrows if they have 30 already
+			}
+			else if (SetMaterials(b, "mat_spears", 10)) 
 			{
 				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "spearman");
 			}
@@ -133,7 +146,12 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	}
 	else if (name == "musketman" || name == "gunner") 
 	{
-		if (gametime > getCTFTimer(this, p, "musketman")) 
+		CInventory@ inv = b.getInventory();
+			if (inv.isInInventory("mat_bullets", 15)) 
+			{
+				return; // don't give arrows if they have 30 already
+			}
+			else if (gametime > getCTFTimer(this, p, "musketman")) 
 		{
 			if (SetMaterials(b, "mat_bullets", 15)) 
 			{
@@ -143,9 +161,14 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	}
 	else if (name == "weaponthrower") 
 	{
-		if (gametime > getCTFTimer(this, p, "weaponthrower")) 
+		CInventory@ inv = b.getInventory();
+			if (inv.isInInventory("mat_boomerangs", 30)) 
+			{
+				return; // don't give arrows if they have 30 already
+			}
+			else if (gametime > getCTFTimer(this, p, "weaponthrower")) 
 		{
-			if (SetMaterials(b, "mat_boomerangs", 15)) 
+			if (SetMaterials(b, "mat_boomerangs", 30)) 
 			{
 				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "weaponthrower");
 			}
@@ -155,7 +178,12 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	{
 		if (gametime > getCTFTimer(this, p, "firelancer")) 
 		{
-			if (SetMaterials(b, "mat_firelances", 10)) 
+			CInventory@ inv = b.getInventory();
+			if (inv.isInInventory("mat_firelances", 30)) 
+			{
+				return; // don't give arrows if they have 30 already
+			}
+			else if (SetMaterials(b, "mat_firelances", 10)) 
 			{
 				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "firelancer");
 			}
@@ -165,7 +193,12 @@ void doGiveSpawnMats(CRules@ this, CPlayer@ p, CBlob@ b)
 	{
 		if (gametime > getCTFTimer(this, p, "firelancer")) 
 		{
-			if (SetMaterials(b, "mat_handcannonballs", 10)) 
+			CInventory@ inv = b.getInventory();
+			if (inv.isInInventory("mat_handcannonballs", 30)) 
+			{
+				return; // don't give arrows if they have 30 already
+			}
+			else if (SetMaterials(b, "mat_handcannonballs", 10)) 
 			{
 				SetCTFTimer(this, p, gametime + (this.isWarmup() ? materials_wait_warmup : materials_wait)*getTicksASecond(), "firelancer");
 			}
@@ -179,6 +212,12 @@ void Reset(CRules@ this)
 	for (uint i = 0; i < getPlayersCount(); ++i) {
 		SetCTFTimer(this, getPlayer(i), 0, "builder");
 		SetCTFTimer(this, getPlayer(i), 0, "archer");
+		SetCTFTimer(this, getPlayer(i), 0, "medic");
+		SetCTFTimer(this, getPlayer(i), 0, "spearman");
+		SetCTFTimer(this, getPlayer(i), 0, "musketman");
+		SetCTFTimer(this, getPlayer(i), 0, "weaponthrower");
+		SetCTFTimer(this, getPlayer(i), 0, "firelancer");
+		SetCTFTimer(this, getPlayer(i), 0, "handcannon");
 	}
 }
 

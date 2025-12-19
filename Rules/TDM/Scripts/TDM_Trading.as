@@ -98,17 +98,21 @@ void MakeTradeMenu(CBlob@ trader) // added in this method
 	if(ClassesConfig::assassin)addItemForCoin(trader, "Smoke Ball", LWB_TDMCosts::cost_smokeball, true, "$mat_smokeball$", "mat_smokeball", "Smoke Ball for Assassin. Can stun nearly enemies.");
 	addItemForCoin(trader, "Mine", cost_mine, true, "$mine$", "mine", Descriptions::mine);
 	//archery stuff
-	addItemForCoin(trader, "Arrows", cost_arrows, true, "$mat_arrows$", "mat_arrows", Descriptions::arrows);
-	addItemForCoin(trader, "Water Arrows", cost_waterarrows, true, "$mat_waterarrows$", "mat_waterarrows", Descriptions::waterarrows);
-	addItemForCoin(trader, "Fire Arrows", cost_firearrows, true, "$mat_firearrows$", "mat_firearrows", Descriptions::firearrows);
-	addItemForCoin(trader, "Bomb Arrow", cost_bombarrows, true, "$mat_bombarrows$", "mat_bombarrows", Descriptions::bombarrows);
-	addItemForCoin(trader, "Poison Arrows", LWB_TDMCosts::cost_poisonarrows, true, "$mat_poisonarrows$", "mat_poisonarrows", "Poison arrows for Archer and Crossbowman.");
+	if(ClassesConfig::archer || ClassesConfig::crossbowman)addItemForCoin(trader, "Arrows", cost_arrows, true, "$mat_arrows$", "mat_arrows", Descriptions::arrows);
+	if(ClassesConfig::archer)addItemForCoin(trader, "Water Arrows", cost_waterarrows, true, "$mat_waterarrows$", "mat_waterarrows", Descriptions::waterarrows);
+	if(ClassesConfig::archer || ClassesConfig::crossbowman)addItemForCoin(trader, "Fire Arrows", cost_firearrows, true, "$mat_firearrows$", "mat_firearrows", Descriptions::firearrows);
+	if(ClassesConfig::archer)addItemForCoin(trader, "Bomb Arrow", cost_bombarrows, true, "$mat_bombarrows$", "mat_bombarrows", Descriptions::bombarrows);
+	if(ClassesConfig::archer || ClassesConfig::crossbowman)addItemForCoin(trader, "Poison Arrows", LWB_TDMCosts::cost_poisonarrows, true, "$mat_poisonarrows$", "mat_poisonarrows", "Poison arrows for Archer and Crossbowman.");
 	if(ClassesConfig::musketman || ClassesConfig::gunner)addItemForCoin(trader, "Bullets", LWB_TDMCosts::cost_bullets, true, "$mat_bullets$", "mat_bullets", "Lead ball and gunpowder in a paper for Musketman.");
 	if(ClassesConfig::musketman)addItemForCoin(trader, "Barricade ", LWB_TDMCosts::cost_barricades, true, "$mat_barricades$", "mat_barricades", "Ballicade frames for Musketman.");
 	if(ClassesConfig::weaponthrower)addItemForCoin(trader, "Boomerangs", LWB_TDMCosts::cost_boomerangs, true, "$mat_boomerangs$", "mat_boomerangs", "Boomerangs for Weapon Thrower.\nReal battle boomerangs don't return because it is danger.");
 	if(ClassesConfig::weaponthrower)addItemForCoin(trader, "Chakrams", LWB_TDMCosts::cost_chakrams, true, "$mat_chakrams$", "mat_chakrams", "Chakrams for Weapon Thrower.\nHas no long range but powerful and can break blocks.");
 	if(ClassesConfig::firelancer)addItemForCoin(trader, "Fire Lances", LWB_TDMCosts::cost_firelances, true, "$mat_firelances$", "mat_firelances", "Chinese boomsticks for Fire Lancer.");
 	if(ClassesConfig::firelancer)addItemForCoin(trader, "Flame Thrower", LWB_TDMCosts::cost_flamethrowers, true, "$mat_flamethrowers$", "mat_flamethrowers", "Fire Lance shaped flame thrower for Fire Lancer.");
+	//advanced stuff
+	if(ClassesConfig::pikeman)addItemForCoin(trader, "Poleaxe Pike", LWB_TDMCosts::cost_pike, true, "$item_pike$", "item_pike", "Use this to become pikeman, the advanced melee class. \n\n[LMB] to attack like knight(effective against players)\n[RMB] to attack like warhammer(effective against blocks)");
+	if(ClassesConfig::handcannon)addItemForCoin(trader, "Handcannon", LWB_TDMCosts::cost_handcannon, true, "$item_handcannon$", "item_handcannon", "Use this to become handcannon, the advanced ranged class.\n\n[LMB] to shoot/build(change at inventory)\n[RMB] to use grapple/handaxe(build mode)");
+	if(ClassesConfig::handcannon)addItemForCoin(trader, "Handcannon Balls", LWB_TDMCosts::cost_handcannonballs, true, "$mat_handcannonballs$", "mat_handcannonballs", "Balls for handcannon.");
 	//utility stuff
 	if(ClassesConfig::rockthrower)addItemForCoin(trader, "Wood", LWB_TDMCosts::cost_wood, true, "$mat_wood$", "mat_wood", Descriptions::wood);
 	if(ClassesConfig::rockthrower)addItemForCoin(trader, "Stone", LWB_TDMCosts::cost_stone, true, "$mat_stone$", "mat_stone", Descriptions::stone);

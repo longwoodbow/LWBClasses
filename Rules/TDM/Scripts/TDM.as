@@ -137,11 +137,11 @@ shared class TDMSpawns : RespawnSystem
 				player.server_setTeamNum(p_info.team);
 			}
 
-			// reset class if die as advanced class
+			// reset class if die as advanced class, added
 			string className = p_info.blob_name;
 			if (className == "pikeman" || className == "handcannon")
 			{
-				p_info.blob_name = randomClass(true);
+				p_info.blob_name = randomClass(false);
 			}
 
 			// remove previous players blob
@@ -444,7 +444,7 @@ shared class TDMCore : RulesCore
 							{
 								player_char = "u";
 							}
-							else if (player_blob.getName() == "demolitionist")
+							else if (player_blob.getName() == "builder" || player_blob.getName() == "chopper" || player_blob.getName() == "warcrafter" || player_blob.getName() == "demolitionist")
 							{
 								player_char = "n";
 							}
@@ -471,6 +471,14 @@ shared class TDMCore : RulesCore
 							else if (player_blob.getName() == "butcher")
 							{
 								player_char = "b";
+							}
+							else if (player_blob.getName() == "pikeman")
+							{
+								player_char = "e";
+							}
+							else if (player_blob.getName() == "handcannon")
+							{
+								player_char = "o";
 							}
 
 							temp += player_char;

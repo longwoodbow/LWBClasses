@@ -76,6 +76,10 @@ namespace LWB_TDMCosts
 	s32 cost_firelances         = 10;
 	s32 cost_flamethrowers      = 40;
 
+	s32 cost_pike               = 150;
+	s32 cost_handcannon         = 150;
+	s32 cost_handcannonballs    = 10;
+
 	s32 cost_drill              = 50;//so don't need to change tdm_vars.cfg
 	s32 cost_wood               = 50;
 	s32 cost_stone              = 10;
