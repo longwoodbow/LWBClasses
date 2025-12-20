@@ -74,7 +74,13 @@ namespace _precache {
 		"butcher_gold, ButcherGold, 32, 32",
 		"demolitionist, Demolitionist, 32, 32",
 		"demolitionist_cape, DemolitionistCape, 32, 32",
-		"demolitionist_gold, DemolitionistGold, 32, 32"
+		"demolitionist_gold, DemolitionistGold, 32, 32",
+		"pikeman, Pikeman, 64, 64",
+		"pikeman_cape, PikemanCape, 64, 64",
+		"pikeman_gold, PikemanGold, 64, 64",
+		"handcannon, Handcannon, 32, 32",
+		"handcannon_cape, HandcannonCape, 32, 32",
+		"handcannon_gold, HandcannonGold, 32, 32"
 	};
 
 	void runner_textures()

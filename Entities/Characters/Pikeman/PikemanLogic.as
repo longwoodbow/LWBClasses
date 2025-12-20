@@ -86,8 +86,8 @@ void onInit(CBlob@ this)
 	AddIconToken("$PikeThrust$", "LWBHelpIcons.png", Vec2f(16, 16), 24);
 	AddIconToken("$PikeSlash$", "LWBHelpIcons.png", Vec2f(16, 16), 25);
 
-	SetHelp(this, "help self action", "pikeman", getTranslatedString("$PikeThrust$Thrust(Effective against players)$LMB$"), "", 4);
-	SetHelp(this, "help self action2", "pikeman", getTranslatedString("$PikeSlash$Slash(Effective against blocks)$RMB$"), "", 4);
+	SetHelp(this, "help self action", "pikeman", "$PikeThrust$Thrust(Effective against players)$LMB$", "", 255);
+	SetHelp(this, "help self action2", "pikeman", "$PikeSlash$Slash(Effective against blocks)$RMB$", "", 255);
 
 	this.getCurrentScript().runFlags |= Script::tick_not_attached;
 	this.getCurrentScript().removeIfTag = "dead";
@@ -221,11 +221,11 @@ void onTick(CBlob@ this)
 		// help
 		if (this.isKeyJustPressed(key_action1) && getGameTime() > 150)
 		{
-			SetHelp(this, "help self action", "pikeman", getTranslatedString("$PikeThrust$ Thrust!    $KEY_HOLD$$LMB$"), "", 255);
+			SetHelp(this, "help self action", "pikeman", "$PikeThrust$ Thrust!    $KEY_HOLD$$LMB$", "", 255);
 		}
 		else if (this.isKeyJustPressed(key_action2) && getGameTime() > 150)
 		{
-			SetHelp(this, "help self action2", "pikeman", getTranslatedString("$PikeSlash$ Slash!    $KEY_HOLD$$RMB$"), "", 255);
+			SetHelp(this, "help self action2", "pikeman", "$PikeSlash$ Slash!    $KEY_HOLD$$RMB$", "", 255);
 		}
 	}
 
@@ -936,14 +936,15 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 								continue;
 
 							bool canhit = true; //default true if not jab
-
-							info.tileDestructionLimiter++; //fake damage
-							if (!jab) //double damage on slash
+							if (jab) //fake damage
 							{
 								info.tileDestructionLimiter++;
+								canhit = ((info.tileDestructionLimiter % ((wood || dirt_stone) ? 3 : 2)) == 0);
 							}
-
-							canhit = ((info.tileDestructionLimiter >= ((wood || dirt_stone) ? 3 : 2)));
+							else //reset fake dmg for next time
+							{
+								info.tileDestructionLimiter = 0;
+							}
 
 							canhit = canhit && (isSlash || !stone);
 
@@ -953,7 +954,6 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 							dontHitMoreMap = true;
 							if (canhit)
 							{
-								info.tileDestructionLimiter = 0;
 								map.server_DestroyTile(hi.hitpos, 0.1f, this);
 								if (gold)
 								{

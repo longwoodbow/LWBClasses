@@ -55,6 +55,7 @@ void onInit(CInventory@ this)
 	blob.addCommandID("tool clear client");
 
 	AddIconToken("$HandcannonNothing$", "Entities/Characters/Handcannon/HandcannonIcons.png", Vec2f(16, 32), 1);
+	AddIconToken("$Handaxe$", "LWBHelpIcons.png", Vec2f(16, 16), 26);
 
 	this.getCurrentScript().removeIfTag = "dead";
 }
@@ -209,6 +210,7 @@ void onCommand(CInventory@ this, u8 cmd, CBitStream@ params)
 			if (blob.isMyPlayer())
 			{
 				SetHelp(blob, "help self action", "handcannon", getTranslatedString("$Build$Build/Place  $LMB$"), "", 3);
+				SetHelp(blob, "help self action2", "handcannon", getTranslatedString("$Handaxe$Handaxe  $RMB$"), "", 255);
 			}
 		}
 	}
