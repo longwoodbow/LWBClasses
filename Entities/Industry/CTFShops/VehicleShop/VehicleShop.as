@@ -79,8 +79,7 @@ void onInit(CBlob@ this)
 		AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::mountedbow);
 	}
 	{
-		string mounted_gun_icon = getTeamIcon("mounted_gun", "MountedGun.png", team_num, Vec2f(16, 16), 6);
-		ShopItem@ s = addShopItem(this, "Mounted Gun", mounted_gun_icon, "mounted_gun", mounted_gun_icon + "\n\n\n" + "Gun edition of mounted bow. Has decent accuracy and fire rate.", false, true);
+		ShopItem@ s = addShopItem(this, "Mounted Gun", "$mounted_gun$", "mounted_gun", mounted_gun_icon + "\n\n\n" + "Gun edition of mounted bow. Has decent accuracy and fire rate.", false, true);
 		s.crate_icon = 11;
 		AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::mountedgun);
 	}
