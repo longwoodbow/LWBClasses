@@ -62,6 +62,10 @@ void onInit(CBlob@ this)
 		ShopItem@ s = addShopItem(this, "Poison Arrows", "$mat_poisonarrows$", "mat_poisonarrows", "Poison arrows for Archer and Crossbowman.", true);
 		AddRequirement(s.requirements, "coin", "", "Coins", LWB_CTFCosts::poisonarrows);
 	}
+	{
+		ShopItem@ s = addShopItem(this, "Bomb Satchel", "$bomb_satchel$", "bomb_satchel", "Highly explosive powder filled satchel, sticks to walls!", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 60);
+	}
 	if(ClassesConfig::musketman || ClassesConfig::gunner)
 	{
 		ShopItem@ s = addShopItem(this, "Bullets", "$mat_bullets$", "mat_bullets", "Lead ball and gunpowder in a paper for Musketman and Gunner.", true);

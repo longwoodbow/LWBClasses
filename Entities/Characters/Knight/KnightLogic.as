@@ -1,5 +1,5 @@
 // Knight logic
-// changed DoAttack for barricades, see line 1315
+// changed DoAttack for barricades, see line 1315, also added molotov.
 
 #include "ActivationThrowCommon.as"
 #include "KnightCommon.as";
@@ -46,6 +46,7 @@ void knight_clear_actor_limits(CBlob@ this)
 
 void onInit(CBlob@ this)
 {
+	AddIconToken( "$Molotov$", "KnightIcons.png", Vec2f(16,32), 3 );// added, other bombs are in BasicHelps.as 
 	KnightInfo knight;
 
 	knight.state = KnightStates::normal;
@@ -309,7 +310,7 @@ void onTick(CBlob@ this)
 					const string itemname = item.getName();
 					if (!holding && bombTypeNames[bombType] == itemname)
 					{
-						if (bombType >= 2)
+						if (bombType >= 3)//changed
 						{
 							this.server_Pickup(item);
 							client_SendThrowOrActivateCommand(this);
@@ -1211,6 +1212,15 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 						blob.set_string("custom_explosion_sound", "/GlassBreak");
 						blob.set_u8("custom_hitter", Hitters::water);
 						blob.Tag("splash ray cast");
+					}
+				}
+				else if (bombType == 2)//added
+				{
+					CBlob @blob = server_CreateBlob("molotov", this.getTeamNum(), this.getPosition());
+					if (blob !is null)
+					{
+						TakeItem(this, bombTypeName);
+						this.server_Pickup(blob);
 					}
 				}
 			}

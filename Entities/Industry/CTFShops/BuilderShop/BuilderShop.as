@@ -31,7 +31,7 @@ void onInit(CBlob@ this)
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f_zero);
-	this.set_Vec2f("shop menu size", Vec2f(6, 4));
+	this.set_Vec2f("shop menu size", Vec2f(6, 5));
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
@@ -49,6 +49,12 @@ void onInit(CBlob@ this)
 	if(ClassesConfig::demolitionist) addPlayerClass(this, "Demolitionist", "$demolitionist_class_icon$", "demolitionist", ClassesDescriptions::demolitionist);
 	this.Tag("multi classes");
 
+	{
+		ShopItem@ s = addShopItem( this, "Portable Outpost", "$portableoutpost$", "portableoutpost", "An outpost, used for cheap spawning/storing/changing class anywhere.", false );
+		AddRequirement( s.requirements, "blob", "mat_wood", "Wood", 600);
+		AddRequirement( s.requirements, "blob", "mat_stone", "Stone", 100 );
+		AddRequirement( s.requirements, "blob", "mat_gold", "Gold", 50 );
+	}
 	if(ClassesConfig::builder || ClassesConfig::rockthrower || ClassesConfig::warcrafter || ClassesConfig::demolitionist)
 	{
 		ShopItem@ s = addShopItem(this, "Drill", getTeamIcon("drill", "Drill.png", team_num, Vec2f(32, 16), 0), "drill", Descriptions::drill + "\n\nRock Thrower, War Crafter and Demolitionist can use this too.", false);

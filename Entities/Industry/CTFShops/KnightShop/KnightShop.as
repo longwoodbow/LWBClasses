@@ -27,7 +27,7 @@ void onInit(CBlob@ this)
 
 	// SHOP
 	this.set_Vec2f("shop offset", Vec2f_zero);
-	this.set_Vec2f("shop menu size", Vec2f(4, 4));
+	this.set_Vec2f("shop menu size", Vec2f(5, 3));
 	this.set_string("shop description", "Buy");
 	this.set_u8("shop icon", 25);
 
@@ -63,6 +63,11 @@ void onInit(CBlob@ this)
 	{
 		ShopItem@ s = addShopItem(this, "Keg", getTeamIcon("keg", "Keg.png", team_num, Vec2f(16, 16), 0), "keg", Descriptions::keg, false);
 		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::keg);
+	}
+	if(ClassesConfig::knight)
+	{
+		ShopItem@ s = addShopItem(this, "Molotov Cocktail", "$molotov$", "mat_molotov", "Burning bomb for knight.", true);
+		AddRequirement(s.requirements, "coin", "", "Coins", 45);
 	}
 	//new items
 	if(ClassesConfig::spearman)
