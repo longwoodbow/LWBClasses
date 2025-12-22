@@ -525,7 +525,7 @@ void onTick(CBlob@ this)
 		return;
 	}
 
-	if (isKnocked(this) || this.isInInventory())
+	if ((isKnocked(this) || this.isInInventory()) && handcannon.charge_state != HandcannonParams::firing)
 	{
 		handcannon.grappling = false;
 		handcannon.charge_state = 0;
