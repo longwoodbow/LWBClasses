@@ -45,13 +45,12 @@ void pikeman_clear_actor_limits(CBlob@ this)
 void onInit(CBlob@ this)
 {
 	PikemanInfo pikeman;
-	this.set("pikemanInfo", @pikeman);
 
 	pikeman.state = PikemanStates::normal;
 	pikeman.pikeTimer = 0;
-	pikeman.tileDestructionLimiter = 0;
 	pikeman.decrease = false;
 	pikeman.isSlash = false;
+	pikeman.tileDestructionLimiter = 0;
 
 	this.set("pikemanInfo", @pikeman);
 	
@@ -73,10 +72,9 @@ void onInit(CBlob@ this)
 	this.set_s32("currentPikemanState", 0);
 
 	this.set_f32("gib health", -1.5f);
-	//no spinning
+	pikeman_actorlimit_setup(this);
 	this.getShape().SetRotationsAllowed(false);
 	this.getShape().getConsts().net_threshold_multiplier = 0.5f;
-	pikeman_actorlimit_setup(this);
 	this.Tag("player");
 	this.Tag("flesh");
 
@@ -190,45 +188,6 @@ void RunStateMachine(CBlob@ this, PikemanInfo@ pikeman, RunnerMoveVars@ moveVars
 
 void onTick(CBlob@ this)
 {
-	PikemanInfo@ pikeman;
-	if (!this.get("pikemanInfo", @pikeman))
-	{
-		return;
-	}
-
-	const bool myplayer = this.isMyPlayer();
-
-	if(myplayer)
-	{
-		// description
-		/*
-		if (u_showtutorial && !this.hasTag("spoke description"))
-		{
-			this.maxChatBubbleLines = 255;
-			this.Chat("Quick melee duel!\n\n[LMB] to jab/slash\n[RMB] to grapple");
-			this.set_u8("emote", Emotes::off);
-			this.set_u32("emotetime", getGameTime() + 300);
-			this.Tag("spoke description");
-		}
-		*/
-
-		// space
-		if (this.isKeyJustPressed(key_action3))
-		{
-			client_SendThrowOrActivateCommand(this);
-		}
-
-		// help
-		if (this.isKeyJustPressed(key_action1) && getGameTime() > 150)
-		{
-			SetHelp(this, "help self action", "pikeman", "$PikeThrust$ Thrust!    $KEY_HOLD$$LMB$", "", 255);
-		}
-		else if (this.isKeyJustPressed(key_action2) && getGameTime() > 150)
-		{
-			SetHelp(this, "help self action2", "pikeman", "$PikeSlash$ Slash!    $KEY_HOLD$$RMB$", "", 255);
-		}
-	}
-
 	bool knocked = isKnocked(this);
 	CHUD@ hud = getHUD();
 
@@ -236,6 +195,12 @@ void onTick(CBlob@ this)
 	//get the vars to turn various other scripts on/off
 	RunnerMoveVars@ moveVars;
 	if (!this.get("moveVars", @moveVars))
+	{
+		return;
+	}
+
+	PikemanInfo@ pikeman;
+	if (!this.get("pikemanInfo", @pikeman))
 	{
 		return;
 	}
@@ -266,6 +231,8 @@ void onTick(CBlob@ this)
 	bool pressed_a2 = this.isKeyPressed(key_action2);
 	bool walking = (this.isKeyPressed(key_left) || this.isKeyPressed(key_right));
 
+	const bool myplayer = this.isMyPlayer();
+
 	if (getNet().isClient() && !this.isInInventory() && myplayer)  //Pikeman charge cursor
 	{
 		PikeCursorUpdate(this, pikeman);
@@ -290,8 +257,27 @@ void onTick(CBlob@ this)
 
 	}
 
+	if(myplayer)
+	{
+		// space
+		if (this.isKeyJustPressed(key_action3))
+		{
+			client_SendThrowOrActivateCommand(this);
+		}
 
-	if (!pikeState && getNet().isServer())
+		// help
+
+		if (this.isKeyJustPressed(key_action1) && getGameTime() > 150)
+		{
+			SetHelp(this, "help self action", "pikeman", "$PikeThrust$ Thrust!    $KEY_HOLD$$LMB$", "", 255);
+		}
+		else if (this.isKeyJustPressed(key_action2) && getGameTime() > 150)
+		{
+			SetHelp(this, "help self action2", "pikeman", "$PikeSlash$ Slash!    $KEY_HOLD$$RMB$", "", 255);
+		}
+	}
+
+	if (!pikeState)
 	{
 		pikeman_clear_actor_limits(this);
 	}
@@ -310,8 +296,8 @@ class NormalState : PikemanState
 	void StateEntered(CBlob@ this, PikemanInfo@ pikeman, u8 previous_state)
 	{
 		pikeman.pikeTimer = 0;
-		this.set_u8("pikeSheathPlayed", 0);
-		this.set_u8("animePikePlayed", 0);
+		this.set_u8("swordSheathPlayed", 0);
+		this.set_u8("animeSwordPlayed", 0);
 	}
 
 	bool TickState(CBlob@ this, PikemanInfo@ pikeman, RunnerMoveVars@ moveVars)
@@ -332,7 +318,6 @@ class NormalState : PikemanState
 		return false;
 	}
 }
-
 
 s32 getPikeTimerDelta(PikemanInfo@ pikeman, bool decrease = false)
 {
@@ -381,8 +366,8 @@ class PikeDrawnState : PikemanState
 	{
 		pikeman.pikeTimer = 0;
 		pikeman.decrease = false;
-		this.set_u8("pikeSheathPlayed", 0);
-		this.set_u8("animePikePlayed", 0);
+		this.set_u8("swordSheathPlayed", 0);
+		this.set_u8("animeSwordPlayed", 0);
 	}
 
 	bool TickState(CBlob@ this, PikemanInfo@ pikeman, RunnerMoveVars@ moveVars)
@@ -404,7 +389,7 @@ class PikeDrawnState : PikemanState
 				if (pikeman.pikeTimer == PikemanVars::slash_charge)
 				{
 					Sound::Play("SwordSheath.ogg", pos, myplayer ? 1.3f : 0.7f);
-					this.set_u8("pikeSheathPlayed", 0);
+					this.set_u8("swordSheathPlayed", 1);
 				}
 			}
 		
@@ -416,6 +401,7 @@ class PikeDrawnState : PikemanState
 			else if (pikeman.pikeTimer == 0)
 			{
 				pikeman.decrease = false;
+				this.set_u8("swordSheathPlayed", 0); // reset sound
 			}
 		
 			AttackMovement(this, pikeman, moveVars);
@@ -464,12 +450,12 @@ class PikeDrawnState : PikemanState
 				if (pikeman.pikeTimer == PikemanVars::thrust_charge_level2)
 				{
 					Sound::Play("AnimeSword.ogg", pos, myplayer ? 1.3f : 0.7f);
-					this.set_u8("animePikePlayed", 1);
+					this.set_u8("animeSwordPlayed", 1);
 				}
 				else if (pikeman.pikeTimer == PikemanVars::thrust_charge)
 				{
 					Sound::Play("SwordSheath.ogg", pos, myplayer ? 1.3f : 0.7f);
-					this.set_u8("pikeSheathPlayed", 1);
+					this.set_u8("swordSheathPlayed", 1);
 				}
 			}
 		
@@ -610,23 +596,23 @@ class SlashState : PikemanState
 
 		}
 
-		/*if (getNet().isClient())
+		if (getNet().isClient())
 		{
 			const bool myplayer = this.isMyPlayer();
 			Vec2f pos = this.getPosition();
-			if (pikeman.state == PikemanStates::pike_power_super && this.get_u8("animePikePlayed") == 0)
+			if (pikeman.state == PikemanStates::pike_thrust_super && this.get_u8("animeSwordPlayed") == 0)
 			{
-				Sound::Play("AnimePike.ogg", pos, myplayer ? 1.3f : 0.7f);
-				this.set_u8("animePikePlayed", 1);
-				this.set_u8("pikeSheathPlayed", 1);
+				Sound::Play("AnimeSword.ogg", pos, myplayer ? 1.3f : 0.7f);
+				this.set_u8("animeSwordPlayed", 1);
+				this.set_u8("swordSheathPlayed", 1);
 
 			}
-			else if (pikeman.state == PikemanStates::pike_power && this.get_u8("pikeSheathPlayed") == 0)
+			else if ((pikeman.state == PikemanStates::pike_thrust || pikeman.state == PikemanStates::pike_slash) && this.get_u8("swordSheathPlayed") == 0)
 			{
-				Sound::Play("PikeSheath.ogg", pos, myplayer ? 1.3f : 0.7f);
-				this.set_u8("pikeSheathPlayed",  1);
+				Sound::Play("SwordSheath.ogg", pos, myplayer ? 1.3f : 0.7f);
+				this.set_u8("swordSheathPlayed",  1);
 			}
-		}*/
+		}
 
 		this.Tag("prevent crouch");
 
@@ -644,13 +630,14 @@ class SlashState : PikemanState
 			Sound::Play("/ArgLong", this.getPosition());
 			Sound::Play("/SwordSlash", this.getPosition());
 		}
-		else if (delta > (isSlash ? DELTA_BEGIN_SLASH : DELTA_BEGIN_THRUST) && delta < (isSlash ? DELTA_END_SLASH : DELTA_END_THRUST))
+		else if (delta > (isSlash ? DELTA_BEGIN_SLASH : DELTA_BEGIN_THRUST) && delta < 10)
 		{
 			Vec2f vec;
 			this.getAimDirection(vec);
 			DoAttack(this, isSlash ? 3.0f : 2.0f, -(vec.Angle()), isSlash ? 120.0f : 60.0f, isSlash ? Hitters::pike_slash : Hitters::pike_thrust, delta, pikeman);
 		}
-		else if (delta >= PikemanVars::thrust_time
+		else if ((isSlash && delta >= PikemanVars::slash_time)
+			|| (!isSlash && delta >= PikemanVars::thrust_time)
 			|| (pikeman.doubleslash && delta >= PikemanVars::double_thrust_time))
 		{
 			if (pikeman.doubleslash)
@@ -693,8 +680,8 @@ class ResheathState : PikemanState
 	void StateEntered(CBlob@ this, PikemanInfo@ pikeman, u8 previous_state)
 	{
 		pikeman.pikeTimer = 0;
-		this.set_u8("pikeSheathPlayed", 0);
-		this.set_u8("animePikePlayed", 0);
+		this.set_u8("swordSheathPlayed", 0);
+		this.set_u8("animeSwordPlayed", 0);
 	}
 
 	bool TickState(CBlob@ this, PikemanInfo@ pikeman, RunnerMoveVars@ moveVars)
@@ -825,7 +812,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 
 				Vec2f hitvec = hi.hitpos - pos;
 
-				// we do a raycast to given blob and hit everything hittable between knight and that blob
+				// we do a raycast to given blob and hit everything hittable between pikeman and that blob
 				// raycast is stopped if it runs into a "large" blob (typically a door)
 				// raycast length is slightly higher than hitvec to make sure it reaches the blob it's directed at
 				HitInfo@[] rayInfos;
@@ -1047,6 +1034,23 @@ void onHitBlob(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@
 	}
 }
 
+void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @ap)
+{
+	if (!ap.socket) {
+		PikemanInfo@ pikeman;
+		if (!this.get("pikemanInfo", @pikeman))
+		{
+			return;
+		}
+
+		pikeman.state = PikemanStates::normal; //cancel any attacks or shielding
+		pikeman.pikeTimer = 0;
+		pikeman.doubleslash = false;
+		pikeman.isSlash = false;
+		this.set_s32("currentPikemanState", 0);
+	}
+}
+
 // Blame Fuzzle.
 bool canHit(CBlob@ this, CBlob@ b)
 {
@@ -1067,19 +1071,4 @@ bool isBlobBeingCarried(CBlob@ b)
 
 	// Look for a "PICKUP" attachment point where socket=false and occupied=true
 	return att.getAttachmentPoint("PICKUP", false, true) !is null;
-}
-
-void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @ap)
-{
-	if (!ap.socket) {
-		PikemanInfo@ pikeman;
-		if (!this.get("pikemanInfo", @pikeman))
-		{
-			return;
-		}
-
-		pikeman.state = PikemanStates::normal; //cancel any attacks or shielding
-		pikeman.pikeTimer = 0;
-		this.set_s32("currentPikemanState", 0);
-	}
 }

@@ -1,4 +1,4 @@
-//builder HUD
+//pikeman HUD
 
 #include "/Entities/Common/GUI/ActorHUDStartPos.as";
 

@@ -91,7 +91,8 @@ namespace Hitters
 		pike_thrust,
 		pike_slash,
 		handcannon,
-		handaxe
+		handaxe,
+		cannon
 	};
 }
 
