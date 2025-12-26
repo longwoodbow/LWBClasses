@@ -1,7 +1,6 @@
 // Pikeman animations
 
 #include "PikemanCommon.as"
-#include "FireParticle.as"
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
 #include "KnockedCommon.as";
@@ -516,7 +515,7 @@ void onRender(CSprite@ this)
 		f32 distance = vector.getLength();
 		Tile tile = map.getTile(surface_position);
 
-		if ((map.isTileSolid(tile) || map.isTileGrass(tile.type)) && map.getSectorAtPosition(surface_position, "no build") is null && distance < 45.0f)
+		if ((map.isTileSolid(tile) || map.isTileGrass(tile.type)) && map.getSectorAtPosition(surface_position, "no build") is null && distance < 48.0f)
 		{
 			DrawCursorAt(surface_position, cursorTexture);
 		}

@@ -48,6 +48,7 @@ void onInit(CBlob@ this)
 
 	pikeman.state = PikemanStates::normal;
 	pikeman.pikeTimer = 0;
+	pikeman.doubleslash = false;
 	pikeman.decrease = false;
 	pikeman.isSlash = false;
 	pikeman.tileDestructionLimiter = 0;
@@ -210,6 +211,7 @@ void onTick(CBlob@ this)
 		//prevent players from insta-slashing when exiting crates
 		pikeman.state = 0;
 		pikeman.pikeTimer = 0;
+		pikeman.doubleslash = false;
 		pikeman.decrease = false;
 		pikeman.isSlash = false;
 		hud.SetCursorFrame(0);
@@ -242,6 +244,7 @@ void onTick(CBlob@ this)
 	{
 		pikeman.state = PikemanStates::normal; //cancel any attacks or shielding
 		pikeman.pikeTimer = 0;
+		pikeman.doubleslash = false;
 		pikeman.decrease = false;
 		pikeman.isSlash = false;
 		this.set_s32("currentPikemanState", 0);
