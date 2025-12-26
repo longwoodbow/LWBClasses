@@ -63,6 +63,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			break;
 
 		case Hitters::explosion:
+		case Hitters::cannon:
 			if (this.hasTag("bombResistant"))
 			{
 				dmg *= 1.4f;

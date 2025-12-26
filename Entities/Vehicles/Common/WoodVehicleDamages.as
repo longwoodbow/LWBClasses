@@ -42,6 +42,10 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 			dmg *= 1.40f;
 			break;
 
+		case Hitters::cannon:
+			dmg *= 2.5f;
+			break;
+
 		case Hitters::explosion:
 			dmg *= 4.5f;
 			break;

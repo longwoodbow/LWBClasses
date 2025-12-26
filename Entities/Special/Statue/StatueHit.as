@@ -78,6 +78,7 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 		case Hitters::cata_stones:
 		case Hitters::crush:
 		case Hitters::cata_boulder:
+		case Hitters::cannon:
 			dmg *= 1.5f;
 			break;
 

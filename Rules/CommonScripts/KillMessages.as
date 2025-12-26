@@ -215,6 +215,7 @@ class KillFeed
 				case Hitters::thrownaxe:		hitterIcon = "$killfeed_thrownaxe$"; break;
 				case Hitters::pike_thrust:
 				case Hitters::pike_slash:		hitterIcon = "$killfeed_pike$"; break;
+				case Hitters::cannon:
 				case Hitters::handcannon:		hitterIcon = "$killfeed_handcannon$"; break;
 				case Hitters::handaxe:		    hitterIcon = "$killfeed_handaxe$"; break;
 
