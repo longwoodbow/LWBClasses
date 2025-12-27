@@ -8,9 +8,9 @@ void onInit(CBlob @ this)
 {
 	this.Tag("medium weight");
 
-	// small explosion stat
+	// small explosion stat, as same as bomb
 	this.set_f32("explosive_radius", 24.0f);
-	this.set_f32("explosive_damage", 1.0f);
+	this.set_f32("explosive_damage", 3.0f);
 	this.set_u8("custom_hitter", Hitters::cannon);
 	this.set_f32("map_damage_radius", 24.0f);
 	this.set_f32("map_damage_ratio", 0.4f);
@@ -57,7 +57,7 @@ void Slam(CBlob @this, f32 angle, Vec2f vel, f32 vellen)
 		for (uint i = 0; i < hitInfos.length; i++)
 		{
 			HitInfo@ hi = hitInfos[i];
-			f32 dmg = 5.0f;// from 2.0f
+			f32 dmg = 2.0f;
 
 			if (hi.blob is null) // map
 			{
@@ -68,6 +68,8 @@ void Slam(CBlob @this, f32 angle, Vec2f vel, f32 vellen)
 			{
 				this.server_Hit(hi.blob, pos, vel, dmg, Hitters::cannon, true);
 				this.setVelocity(vel * 0.9f); //damp
+				// small explosion on hit blob
+				Explode(this, this.get_f32("explosive_radius"), this.get_f32("explosive_damage"));
 
 				// die when hit something large
 				if (hi.blob.getRadius() > 32.0f)
@@ -153,10 +155,9 @@ bool BoulderHitMap(CBlob@ this, Vec2f worldPoint, int tileOffset, Vec2f velocity
 	return stuck;
 }
 
-
 void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point1)
 {
-	if (blob !is null)
+	if (solid && blob !is null)
 	{
 		Vec2f hitvel = this.getOldVelocity();
 		Vec2f hitvec = point1 - this.getPosition();
@@ -175,6 +176,50 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 			return;
 		}
 
+		u8 tteam = this.getTeamNum();
+		CPlayer@ damageowner = this.getDamageOwnerPlayer();
+
+		//not teamkilling (except self)
+		if (damageowner is null || damageowner !is blob.getPlayer())
+		{
+			if (
+			    (blob.getName() != this.getName() &&
+			     (blob.getTeamNum() == this.getTeamNum() || blob.getTeamNum() == tteam))
+			)
+			{
+				return;
+			}
+		}
+
+		//not hitting static stuff
+		if (blob.getShape() !is null && blob.getShape().isStatic())
+		{
+			return;
+		}
+
+		//hitting less or similar mass
+		if (this.getMass() < blob.getMass() - 1.0f)
+		{
+			return;
+		}
+
+		//get the dmg required
+		hitvel.Normalize();
+		f32 dmg = vellen > 8.0f ? 5.0f : (vellen > 4.0f ? 1.5f : 0.5f);
+
+		//bounce off if not gibbed
+		if (dmg < 4.0f)
+		{
+			this.setVelocity(blob.getOldVelocity() + hitvec * -Maths::Min(dmg * 0.33f, 1.0f));
+		}
+
+		//hurt
+		this.server_Hit(blob, point1, hitvel, dmg, Hitters::cannon, true);
+
+		return;
+
+		// where is this from?
+		/*
 		if ((!blob.hasTag("invincible") && this.getTeamNum() != blob.getTeamNum()) || blob.hasTag("blocks sword"))
 		{
 			u8 blocks_pierced = this.get_u8("blocks_pierced");
@@ -190,6 +235,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid, Vec2f normal, Vec2f point
 				this.server_Hit(this, this.getPosition(), hitvel, 10, Hitters::crush, true);
 			}
 		}
+		*/
 	}
 }
 
@@ -205,11 +251,11 @@ f32 onHit(CBlob@ this, Vec2f worldPoint, Vec2f velocity, f32 damage, CBlob@ hitt
 
 void onDie(CBlob@ this)
 {
-	// big explosion, power up	
+	// big explosion, power up, as same as mine
 	this.set_f32("explosive_radius", 32.0f);
-	this.set_f32("explosive_damage", 10.0f);
+	this.set_f32("explosive_damage", 8.0f);
 	this.set_f32("map_damage_radius", 32.0f);
-	this.set_f32("map_damage_ratio", 0.6f);
+	this.set_f32("map_damage_ratio", 0.5f);
 	this.set_string("custom_explosion_sound", "Entities/Items/Explosives/KegExplosion.ogg");
 
 	Explode(this, this.get_f32("explosive_radius"), this.get_f32("explosive_damage"));
