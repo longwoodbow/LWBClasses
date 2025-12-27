@@ -33,12 +33,8 @@ class CrankedGunInfo : VehicleInfo
 
 void onInit(CBlob@ this)
 {
-	// from PopWheelsOff.as
-	this.addCommandID("pop_wheels");
-	if (this.hasTag("immobile"))
-	{
-		PopWheels(this, false);
-	}
+	Vec2f wheelPos = Vec2f(0.0f, 9.0f);
+	this.set_Vec2f("wheel pos", wheelPos);
 
 	Vehicle_Setup(this,
 	              50.0f, // move speed
@@ -66,7 +62,7 @@ void onInit(CBlob@ this)
 	                         1.0f, // movement sound volume modifier   0.0f = no manipulation
 	                         1.0f // movement sound pitch modifier     0.0f = no manipulation
 	                        );
-	Vehicle_addWheel(this, v, "IronWheel.png", 16, 16, 0, Vec2f(0.0f, 9.0f));
+	Vehicle_addWheel(this, v, "IronWheel.png", 16, 16, 0, wheelPos);
 
 
 	// init arm + cage sprites
@@ -103,6 +99,11 @@ void onInit(CBlob@ this)
 			ammo.server_Die();
 		}
 	}
+
+	CMap@ map = getMap();
+	if (map is null) return;
+
+	this.SetFacingLeft(this.getPosition().x > (map.tilemapwidth * map.tilesize) / 2);
 }
 
 f32 getAimAngle(CBlob@ this, VehicleInfo@ v)
@@ -168,15 +169,6 @@ void onTick(CBlob@ this)
 	this.set_bool("facing", this.isFacingLeft());
 }
 
-void onHealthChange(CBlob@ this, f32 oldHealth)
-{
-	//UpdateFrame(this);
-}
-/*
-void UpdateFrame(CBlob@ this)
-{
-}
-*/
 void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
 	if (!canSeeButtons(this, caller)) return;
@@ -185,20 +177,6 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	{
 		Vehicle_AddLoadAmmoButton(this, caller);
 	}
-	
-	if (this.isAttached() || caller.isAttached()) return;
-
-	if (this.getAttachments().getAttachmentPointByName("DRIVER").getOccupied() !is null) return;
-
-	if (this.getTeamNum() == caller.getTeamNum() && this.getDistanceTo(caller) < this.getRadius() && !this.hasTag("immobile"))
-	{
-		caller.CreateGenericButton(2, Vec2f(0.0f, 8.0f), this, this.getCommandID("pop_wheels"), getTranslatedString("Immobilise"));
-	}
-}
-
-bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
-{
-	return Vehicle_doesCollideWithBlob_ground(this, blob);
 }
 
 void onCollision(CBlob@ this, CBlob@ blob, bool solid)
@@ -209,57 +187,7 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 	}
 }
 
-// from PopWheelsOff.as
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
+bool doesCollideWithBlob(CBlob@ this, CBlob@ blob)
 {
-	if (cmd == this.getCommandID("pop_wheels"))
-	{
-		if (!this.hasTag("immobile"))
-		{
-			CBlob@ chauffeur = this.getAttachments().getAttachmentPointByName("DRIVER").getOccupied();
-			if (chauffeur !is null) return;
-
-			this.Tag("immobile");
-			PopWheels(this, true);
-		}
-	}
-}
-
-void PopWheels(CBlob@ this, bool addparticles = true)
-{
-	this.getShape().setFriction(0.75f);   //grippy now
-
-	if (!isClient()) //don't bother w/o graphics
-		return;
-
-	CSprite@ sprite = this.getSprite();
-
-	Vec2f pos = this.getPosition();
-	Vec2f vel = this.getVelocity();
-
-	//remove wheels
-	for (int i = 0; i < sprite.getSpriteLayerCount(); ++i)
-	{
-		CSpriteLayer@ wheel = sprite.getSpriteLayer(i);
-		if (wheel !is null && wheel.name.substr(0, 2) == "!w")
-		{
-			if (addparticles)
-			{
-				//todo: wood falling sounds...
-				makeGibParticle("IronWheel.png", pos + wheel.getOffset(), vel + getRandomVelocity(90, 5, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/material_drop", 0);
-			}
-
-			sprite.RemoveSpriteLayer(wheel.name);
-			i--;
-		}
-	}
-
-	//add chocks
-	CSpriteLayer@ chocks = sprite.addSpriteLayer("!chocks", "IronWheel.png", 16, 16);
-	if (chocks !is null)
-	{
-		Animation@ anim = chocks.addAnimation("default", 0, false);
-		anim.AddFrame(1);
-		chocks.SetOffset(Vec2f(0, 9.0f));
-	}
+	return Vehicle_doesCollideWithBlob_ground(this, blob);
 }

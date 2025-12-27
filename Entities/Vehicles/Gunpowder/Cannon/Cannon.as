@@ -60,12 +60,8 @@ class CannonInfo : VehicleInfo
 
 void onInit(CBlob@ this)
 {
-	// from PopWheelsOff.as
-	this.addCommandID("pop_wheels");
-	if (this.hasTag("immobile"))
-	{
-		PopWheels(this, false);
-	}
+	Vec2f wheelPos = Vec2f(8.0f, 9.0f);
+	this.set_Vec2f("wheel pos", wheelPos);
 
 	Vehicle_Setup(this,
 	              50.0f, // move speed
@@ -94,33 +90,16 @@ void onInit(CBlob@ this)
 	                         1.0f, // movement sound volume modifier   0.0f = no manipulation
 	                         1.0f // movement sound pitch modifier     0.0f = no manipulation
 	                        );
-	Vehicle_addWheel(this, v, "IronWheel.png", 16, 16, 0, Vec2f(8.0f, 9.0f));
+	Vehicle_addWheel(this, v, "IronWheel.png", 16, 16, 0, wheelPos);
 
 	v.wep_angle = low_angle;
-
-	// init arm + cage sprites
-	CSprite@ sprite = this.getSprite();
-	sprite.SetZ(-25.0f);
-	CSpriteLayer@ arm = sprite.addSpriteLayer("arm", sprite.getConsts().filename, 16, 32);
-	if (arm !is null)
-	{
-		Animation@ anim = arm.addAnimation("default", 0, false);
-		int[] frames = { 2 };
-		anim.AddFrames(frames);
-		arm.RotateBy(low_angle, Vec2f(0.0f, 8.0f));
-		arm.SetOffset(Vec2f(8.0f, 0.0f));
-		arm.SetRelativeZ(0.08f);
-	}
-
-	//UpdateFrame(this);
-
 
 	this.getShape().SetRotationsAllowed(false);
 
 	string[] autograb_blobs = {"mat_cannonballs"};
 	this.set("autograb blobs", autograb_blobs);
 
-	this.set_bool("facing", false);
+	this.set_bool("facing", true);
 
 	// auto-load on creation
 	if (isServer())
@@ -131,6 +110,20 @@ void onInit(CBlob@ this)
 			ammo.server_Die();
 		}
 	}
+
+	CSprite@ sprite = this.getSprite();
+	sprite.SetZ(-25.0f);
+	CSpriteLayer@ arm = sprite.addSpriteLayer("arm", sprite.getConsts().filename, 16, 32);
+	if (arm !is null)
+	{
+		Animation@ anim = arm.addAnimation("default", 0, false);
+		anim.AddFrame(2);
+		arm.RotateBy(low_angle, Vec2f(0.0f, 8.0f));
+		arm.SetOffset(Vec2f(8.0f, 0.0f));
+		arm.SetRelativeZ(0.08f);
+	}
+
+	//UpdateFrame(this); //make damaged sprites?
 }
 
 f32 getAimAngle(CBlob@ this, VehicleInfo@ v)
@@ -188,7 +181,6 @@ void onTick(CBlob@ this)
 		{
 			arm.ResetTransform();
 			arm.RotateBy(angle, Vec2f(0.0f, 8.0f));
-			arm.SetRelativeZ(0.08f);
 			//arm.animation.frame = v.getCurrentAmmo().loaded_ammo > 0 ? 1 : 0;
 		}
 	}
@@ -199,18 +191,12 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 {
 	if (!canSeeButtons(this, caller)) return;
 
-	if (!Vehicle_AddFlipButton(this, caller))
+	if (!Vehicle_AddFlipButton(this, caller) &&
+	    caller.getTeamNum() == this.getTeamNum() &&
+	    this.getDistanceTo(caller) < this.getRadius() &&
+	    !caller.isAttached())
 	{
 		Vehicle_AddLoadAmmoButton(this, caller);
-	}
-	
-	if (this.isAttached() || caller.isAttached()) return;
-
-	if (this.getAttachments().getAttachmentPointByName("DRIVER").getOccupied() !is null) return;
-
-	if (this.getTeamNum() == caller.getTeamNum() && this.getDistanceTo(caller) < this.getRadius() && !this.hasTag("immobile"))
-	{
-		caller.CreateGenericButton(2, Vec2f(0.0f, 8.0f), this, this.getCommandID("pop_wheels"), getTranslatedString("Immobilise"));
 	}
 }
 
@@ -230,59 +216,4 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 void onAttach(CBlob@ this, CBlob@ attached, AttachmentPoint @attachedPoint)
 {
 	attachedPoint.offsetZ = 1.0f;
-}
-
-// from PopWheelsOff.as
-void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
-{
-	if (cmd == this.getCommandID("pop_wheels"))
-	{
-		if (!this.hasTag("immobile"))
-		{
-			CBlob@ chauffeur = this.getAttachments().getAttachmentPointByName("DRIVER").getOccupied();
-			if (chauffeur !is null) return;
-
-			this.Tag("immobile");
-			PopWheels(this, true);
-		}
-	}
-}
-
-void PopWheels(CBlob@ this, bool addparticles = true)
-{
-	this.getShape().setFriction(0.75f);   //grippy now
-
-	if (!isClient()) //don't bother w/o graphics
-		return;
-
-	CSprite@ sprite = this.getSprite();
-
-	Vec2f pos = this.getPosition();
-	Vec2f vel = this.getVelocity();
-
-	//remove wheels
-	for (int i = 0; i < sprite.getSpriteLayerCount(); ++i)
-	{
-		CSpriteLayer@ wheel = sprite.getSpriteLayer(i);
-		if (wheel !is null && wheel.name.substr(0, 2) == "!w")
-		{
-			if (addparticles)
-			{
-				//todo: wood falling sounds...
-				makeGibParticle("IronWheel.png", pos + wheel.getOffset(), vel + getRandomVelocity(90, 5, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/material_drop", 0);
-			}
-
-			sprite.RemoveSpriteLayer(wheel.name);
-			i--;
-		}
-	}
-
-	//add chocks
-	CSpriteLayer@ chocks = sprite.addSpriteLayer("!chocks", "IronWheel.png", 16, 16);
-	if (chocks !is null)
-	{
-		Animation@ anim = chocks.addAnimation("default", 0, false);
-		anim.AddFrame(1);
-		chocks.SetOffset(Vec2f(8.0f, 9.0f));
-	}
 }

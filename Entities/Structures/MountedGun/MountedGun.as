@@ -13,8 +13,8 @@ class MountedGunInfo : VehicleInfo
 			f32 angle = wep_angle * sign;
 			angle += (XORRandom(512) - 256) / 128.0f;// from 64, 4 -> 2 degrees
 
-			const f32 arrow_speed = 50.0f;
-			Vec2f vel = Vec2f(arrow_speed * sign, 0.0f).RotateBy(angle);
+			const f32 bullet_speed = 50.0f;
+			Vec2f vel = Vec2f(bullet_speed * sign, 0.0f).RotateBy(angle);
 			bullet.setVelocity(vel);
 
 			// set much higher drag than archer arrow

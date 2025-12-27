@@ -82,7 +82,7 @@ void PopWheels(CBlob@ this, bool addparticles = true)
 			if (addparticles)
 			{
 				//todo: wood falling sounds...
-				makeGibParticle("Entities/Vehicles/Common/WoodenWheels.png", pos + wheel.getOffset(), vel + getRandomVelocity(90, 5, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/material_drop", 0);
+				makeGibParticle("Entities/Vehicles/Common/IronWheel.png", pos + wheel.getOffset(), vel + getRandomVelocity(90, 5, 80), 0, 0, Vec2f(16, 16), 2.0f, 20, "/material_drop", 0);
 			}
 
 			sprite.RemoveSpriteLayer(wheel.name);
@@ -91,11 +91,11 @@ void PopWheels(CBlob@ this, bool addparticles = true)
 	}
 
 	//add chocks
-	CSpriteLayer@ chocks = sprite.addSpriteLayer("!chocks", "Entities/Vehicles/Common/WoodenChocks.png", 32, 16);
+	CSpriteLayer@ chocks = sprite.addSpriteLayer("!chocks", "Entities/Vehicles/Common/IronWheel.png", 16, 16);
 	if (chocks !is null)
 	{
 		Animation@ anim = chocks.addAnimation("default", 0, false);
-		anim.AddFrame(0);
-		chocks.SetOffset(Vec2f(0, this.getHeight() * 0.5f - 2.5f));
+		anim.AddFrame(1);
+		chocks.SetOffset(this.get_Vec2f("wheel pos"));
 	}
 }
