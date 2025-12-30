@@ -760,6 +760,13 @@ void onDetach(CBlob@ this, CBlob@ detached, AttachmentPoint@ attachedPoint)
 // help
 void onAddToInventory(CBlob@ this, CBlob@ blob)
 {
+	// destroy built blob if somehow they got into inventory
+	if (blob.hasTag("temp blob"))
+	{
+		blob.server_Die();
+		blob.Untag("temp blob");
+	}
+
 	string itemname = blob.getName();
 	if (this.isMyPlayer())
 	{

@@ -3,6 +3,7 @@
 #include "BuilderCommon.as";
 #include "MusketmanCommon.as"
 #include "FireParticle.as"
+#include "Requirements.as";
 #include "RunnerAnimCommon.as";
 #include "RunnerCommon.as";
 #include "KnockedCommon.as";
@@ -453,132 +454,7 @@ const string cursorTexture = "Entities/Characters/Sprites/TileCursor.png";
 
 void onRender(CSprite@ this)
 {
-	// from builderinventory.as
-	CMap@ map = getMap();
-
 	CBlob@ blob = this.getBlob();
-	CBlob@ localBlob = getLocalPlayerBlob();
-	if (localBlob is blob)
-	{
-		// no build zone show
-		const bool onground = blob.isOnGround();
-		const u32 time = blob.get_u32( "cant build time" );
-		if (time + SHOW_NO_BUILD_TIME > getGameTime())
-		{
-			Vec2f space = blob.get_Vec2f( "building space" );
-			Vec2f offsetPos = getBuildingOffsetPos(blob, map, space);
-
-			const f32 scalex = getDriver().getResolutionScaleFactor();
-			const f32 zoom = getCamera().targetDistance * scalex;
-			Vec2f aligned = getDriver().getScreenPosFromWorldPos( offsetPos );
-
-			for (f32 step_x = 0.0f; step_x < space.x ; ++step_x)
-			{
-				for (f32 step_y = 0.0f; step_y < space.y ; ++step_y)
-				{
-					Vec2f temp = ( Vec2f( step_x + 0.5, step_y + 0.5 ) * map.tilesize );
-					Vec2f v = offsetPos + temp;
-					Vec2f pos = aligned + (temp - Vec2f(0.5f,0.5f)* map.tilesize) * 2 * zoom;
-					if (!onground || map.getSectorAtPosition(v , "no build") !is null || map.isTileSolid(v) || blobBlockingBuilding(map, v))
-					{
-						// draw red
-						GUI::DrawIcon( "CrateSlots.png", 5, Vec2f(8,8), pos, zoom );
-					}
-					else
-					{
-						// draw white
-						GUI::DrawIcon( "CrateSlots.png", 9, Vec2f(8,8), pos, zoom );
-					}
-				}
-			}
-		}
-
-		// show cant build
-		if (blob.isKeyPressed(key_action1) || blob.get_u32("show build time") + 15 > getGameTime())
-		{
-			if (blob.isKeyPressed(key_action1))
-			{
-				blob.set_u32( "show build time", getGameTime());
-			}
-
-			Vec2f cam_offset = getCamera().getInterpolationOffset();
-
-			BlockCursor @bc;
-			blob.get("blockCursor", @bc);
-			if (bc !is null)
-			{
-				if (bc.blockActive || bc.blobActive)
-				{
-					Vec2f pos = blob.getPosition();
-					Vec2f myPos =  blob.getInterpolatedScreenPos() + Vec2f(0.0f,(pos.y > blob.getAimPos().y) ? -blob.getRadius() : blob.getRadius());
-					Vec2f aimPos2D = getDriver().getScreenPosFromWorldPos( blob.getAimPos() + cam_offset );
-
-					if (!bc.hasReqs)
-					{
-						const string missingText = getButtonRequirementsText( bc.missing, true );
-						Vec2f boxpos( myPos.x, myPos.y - 120.0f );
-						GUI::DrawText( getTranslatedString("Requires\n") + missingText, Vec2f(boxpos.x - 50, boxpos.y - 15.0f), Vec2f(boxpos.x + 50, boxpos.y + 15.0f), color_black, false, false, true );
-					}
-					else if (bc.cursorClose)
-					{
-						if (bc.rayBlocked)
-						{
-							Vec2f blockedPos2D = getDriver().getScreenPosFromWorldPos(bc.rayBlockedPos + cam_offset);
-							GUI::DrawArrow2D( aimPos2D, blockedPos2D, SColor(0xffdd2212) );
-						}
-
-						if (!bc.buildableAtPos && !bc.sameTileOnBack) //no build indicator drawing
-						{
-							CMap@ map = getMap();
-							Vec2f middle = blob.getAimPos() + Vec2f(map.tilesize*0.5f, map.tilesize*0.5f);
-							CMap::Sector@ sector = map.getSectorAtPosition( middle, "no build");
-							if (sector !is null)
-							{
-								GUI::DrawRectangle( getDriver().getScreenPosFromWorldPos(sector.upperleft), getDriver().getScreenPosFromWorldPos(sector.lowerright), SColor(0x65ed1202) );
-							}
-							else
-							{
-								CBlob@[] blobsInRadius;
-								if (map.getBlobsInRadius( middle, map.tilesize, @blobsInRadius ))
-								{
-									for (uint i = 0; i < blobsInRadius.length; i++)
-									{
-										CBlob @b = blobsInRadius[i];
-										if (!b.isAttached())
-										{
-											Vec2f bpos = b.getInterpolatedPosition();
-											float w = b.getWidth();
-											float h = b.getHeight();
-
-											if (b.getAngleDegrees() % 180 != 0) //swap dimentions
-											{
-												float t = w;
-												w = h;
-												h = t;
-											}
-
-											GUI::DrawRectangle( getDriver().getScreenPosFromWorldPos(bpos + Vec2f(w/-2.0f, h/-2.0f)),
-																getDriver().getScreenPosFromWorldPos(bpos + Vec2f(w/2.0f, h/2.0f)),
-																SColor(0x65ed1202) );
-										}
-									}
-								}
-							}
-						}
-					}
-					else
-					{
-						const f32 maxDist = getMaxBuildDistance(blob) + 8.0f;
-						Vec2f norm = aimPos2D - myPos;
-						const f32 dist = norm.Normalize();
-						norm *= (maxDist - dist);
-						GUI::DrawArrow2D( aimPos2D, aimPos2D + norm, SColor(0xffdd2212) );
-					}
-				}
-			}
-		}
-	}
-
 	// from knightanim.as
 	if (!blob.isMyPlayer())
 	{

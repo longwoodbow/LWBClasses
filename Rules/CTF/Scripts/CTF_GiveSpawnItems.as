@@ -263,6 +263,7 @@ void onTick(CRules@ this)
 		getBlobsByName("buildershop", @spots);
 		getBlobsByName("archershop",  @spots);
 		getBlobsByName("knightshop",  @spots); // added
+		getBlobsByName("portableoutpost",	@spots);
 		for (uint step = 0; step < spots.length; ++step) 
 		{
 			CBlob@ spot = spots[step];
