@@ -66,7 +66,8 @@ void onInit(CBlob@ this)
 		AddRequirement(s.requirements, "coin", "", "Coins", CTFCosts::sponge);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Bucket", "$_buildershop_filled_bucket$", "filled_bucket", Descriptions::filled_bucket, false);
+		ShopItem@ s = addShopItem(this, "Filled Bucket", "$_buildershop_filled_bucket$", "filled_bucket", Descriptions::filled_bucket + "\n\nNow you can fill bucket at builder shop and workbench.", false);
+		s.spawnNothing = true;
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", CTFCosts::bucket_wood);
 	}
 	{
@@ -164,7 +165,6 @@ void GetButtonsFor(CBlob@ this, CBlob@ caller)
 	this.set_bool("shop available", this.isOverlapping(caller));
 }
 
-/*
 // fill bucket on collision
 void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 {
@@ -211,7 +211,6 @@ void onCollision(CBlob@ this, CBlob@ blob, bool solid)
 		}
 	}
 }
-*/
 
 void onShopMadeItem(CBitStream@ params)
 {

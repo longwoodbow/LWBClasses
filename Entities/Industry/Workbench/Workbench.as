@@ -36,6 +36,9 @@ void InitWorkshop(CBlob@ this)
 
 	const bool TTH = gamemode == "TTH" || gamemode == "Moba";
 
+	ShopMadeItem@ onMadeItem = @onShopMadeItem;
+	this.set("onShopMadeItem handle", @onMadeItem);
+
 	AddIconToken("$_buildershop_filled_bucket$", "Bucket.png", Vec2f(16, 16), 1);
 
 	this.set_Vec2f("shop offset", Vec2f_zero);
@@ -46,7 +49,8 @@ void InitWorkshop(CBlob@ this)
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", WARCosts::lantern_wood);
 	}
 	{
-		ShopItem@ s = addShopItem(this, "Bucket", "$_buildershop_filled_bucket$", "filled_bucket", Descriptions::filled_bucket, false);
+		ShopItem@ s = addShopItem(this, "Filled Bucket", "$_buildershop_filled_bucket$", "filled_bucket", Descriptions::filled_bucket + "\n\nNow you can fill bucket at builder shop and workbench.", false);
+		s.spawnNothing = true;
 		AddRequirement(s.requirements, "blob", "mat_wood", "Wood", WARCosts::bucket_wood);
 	}
 	{
