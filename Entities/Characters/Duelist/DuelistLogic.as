@@ -707,7 +707,7 @@ class SlashState : DuelistState
 		{
 			Vec2f vec;
 			this.getAimDirection(vec);
-			DoAttack(this, 1.5f, -(vec.Angle()), 60.0f, Hitters::rapier, delta, duelist);//half arc
+			DoAttack(this, 2.0f, -(vec.Angle()), 60.0f, Hitters::rapier, delta, duelist);//half arc
 		}
 		else if (delta >= DuelistVars::slash_time)
 		{
