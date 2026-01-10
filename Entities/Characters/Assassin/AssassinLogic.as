@@ -536,8 +536,7 @@ void onCommand(CBlob@ this, u8 cmd, CBitStream @params)
 						if (rayb is null) break; // means we ran into a tile, don't need blobs after it if there are any
 						if (rayb.hasTag("ignore sword") || !canHit(this, rayb)) continue;
 
-						bool large = (rayb.hasTag("blocks sword") || (rayb.hasTag("barricade") && rayb.getTeamNum() != this.getTeamNum())// added here
-									 && !rayb.isAttached() && rayb.isCollidable()); // usually doors, but can also be boats/some mechanisms
+						bool large = rayb.hasTag("blocks sword") && !rayb.isAttached() && rayb.isCollidable(); // usually doors, but can also be boats/some mechanisms
 
 						if (rayb.getTeamNum() != this.getTeamNum() || rayb.hasTag("dead player"))
 						{

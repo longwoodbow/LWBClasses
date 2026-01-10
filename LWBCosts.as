@@ -102,7 +102,7 @@ namespace LWBClassesCosts//building costs
 	s32 wooden_spikes           = 30;
 	s32 planter_block_wood      = 50;
 	s32 planter_block_stone     = 10;
-	bool allow_nursery          = true;
+	bool allow_nursery          = false; // it has infinite producing issue, be careful
 	s32 nursery                 = 500;
 	//warcrafter
 	s32 warcrafter_axe_wood     = 5;

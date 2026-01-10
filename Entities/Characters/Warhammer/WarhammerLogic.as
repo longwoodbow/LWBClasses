@@ -643,7 +643,7 @@ bool checkFlailStep(CBlob@ this, WarhammerInfo@ warhammer, CMap@ map, const f32 
 					this.server_Hit(b, b.getPosition(), velocity, temp_damage, Hitters::flail, true);
 				}
 
-				if (b.hasTag("blocks sword") || (b.hasTag("barricade") && b.getTeamNum() != this.getTeamNum()) && !b.isAttached() && b.isCollidable())// same with sword and more
+				if (b.hasTag("blocks sword") && !b.isAttached() && b.isCollidable())// same with sword and more
 				{
 					//TODO: Maybe figure out a way to flail moving blobs
 					//		without massive desync + forces :)
@@ -1220,8 +1220,8 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 					if (rayb is null) break; // means we ran into a tile, don't need blobs after it if there are any
 					if (rayb.hasTag("ignore sword") || !canHit(this, rayb)) continue;
 
-					bool large = (rayb.hasTag("blocks sword") || (rayb.hasTag("barricade") && rayb.getTeamNum() != this.getTeamNum())// added here
-								 && !rayb.isAttached() && rayb.isCollidable()); // usually doors, but can also be boats/some mechanisms
+					bool large = rayb.hasTag("blocks sword") && !rayb.isAttached() && rayb.isCollidable(); // usually doors, but can also be boats/some mechanisms
+					
 					if (warhammer_has_hit_actor(this, rayb)) 
 					{
 						// check if we hit any of these on previous ticks of slash

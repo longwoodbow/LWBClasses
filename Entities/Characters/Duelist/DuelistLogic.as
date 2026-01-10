@@ -968,8 +968,7 @@ void DoAttack(CBlob@ this, f32 damage, f32 aimangle, f32 arcdegrees, u8 type, in
 					if (rayb is null) break; // means we ran into a tile, don't need blobs after it if there are any
 					if (rayb.hasTag("ignore sword") || !canHit(this, rayb)) continue;
 
-					bool large = (rayb.hasTag("blocks sword") || (rayb.hasTag("barricade") && rayb.getTeamNum() != this.getTeamNum())// added here
-								 && !rayb.isAttached() && rayb.isCollidable()); // usually doors, but can also be boats/some mechanisms
+					bool large = rayb.hasTag("blocks sword") && !rayb.isAttached() && rayb.isCollidable(); // usually doors, but can also be boats/some mechanisms
 								 
 					if (duelist_has_hit_actor(this, rayb)) 
 					{
